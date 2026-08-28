@@ -276,12 +276,29 @@ export const SmartAIChatBot = () => {
     }
   };
 
+  const [isMobile, setIsMobile] = useState(typeof window !== "undefined" ? window.innerWidth < 768 : false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   const currentAdvisorConfig = advisors.find((a) => a.id === activeAdvisor) || advisors[0];
   const CurrentIcon = currentAdvisorConfig.icon;
   const isCustomKeyActive = !!getCustomLlmKey();
 
   return (
-    <div style={{ position: "fixed", bottom: 0, right: "24px", zIndex: 99999 }}>
+    <div style={{
+      position: "fixed",
+      bottom: 0,
+      right: isMobile ? 0 : "24px",
+      left: isMobile && isOpen ? 0 : "auto",
+      top: isMobile && isOpen ? 0 : "auto",
+      zIndex: 99999
+    }}>
       {/* Hidden File Input */}
       <input
         type="file"
@@ -294,9 +311,9 @@ export const SmartAIChatBot = () => {
 
       <AnimatePresence>
         {/* =========================================================================
-           1. COLLAPSED DOCKED BAR (LinkedIn-style)
+           1. COLLAPSED DOCKED BAR (LinkedIn-style) - Visible only on Desktop
            ========================================================================= */}
-        {!isOpen && (
+        {!isOpen && !isMobile && (
           <motion.button
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
@@ -374,11 +391,11 @@ export const SmartAIChatBot = () => {
         )}
 
         {/* =========================================================================
-           2. EXPANDED CHAT DRAWER
+           2. EXPANDED CHAT DRAWER (Full-screen sheet on mobile, docked on desktop)
            ========================================================================= */}
         {isOpen && (
           <motion.div
-            drag
+            drag={!isMobile}
             dragMomentum={false}
             dragElastic={0.05}
             initial={{ y: 400, opacity: 0, scale: 0.95 }}
@@ -389,20 +406,22 @@ export const SmartAIChatBot = () => {
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
             style={{
-              width: "min(460px, calc(100vw - 32px))",
-              height: "620px",
-              maxHeight: "calc(100vh - 32px)",
+              width: isMobile ? "100vw" : "min(460px, calc(100vw - 32px))",
+              height: isMobile ? "100dvh" : "620px",
+              maxHeight: isMobile ? "100dvh" : "calc(100vh - 32px)",
               background: "#120f0b",
-              border: isDragging ? "2px dashed #f59e0b" : "1px solid var(--border-amber)",
-              borderRadius: "14px 14px 0 0",
+              border: isMobile ? "none" : (isDragging ? "2px dashed #f59e0b" : "1px solid var(--border-amber)"),
+              borderRadius: isMobile ? "0px" : "14px 14px 0 0",
               boxShadow: "0 -15px 50px rgba(0, 0, 0, 0.9), 0 0 35px rgba(245, 158, 11, 0.25)",
               display: "flex",
               flexDirection: "column",
               overflow: "hidden",
-              position: "relative",
-              touchAction: "none"
+              position: isMobile ? "fixed" : "relative",
+              inset: isMobile ? 0 : "auto",
+              touchAction: isMobile ? "auto" : "none"
             }}
           >
+
             {/* Drag overlay notice */}
             {isDragging && (
               <div style={{

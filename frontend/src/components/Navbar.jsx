@@ -118,8 +118,8 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenPalette }) => {
           </div>
         </div>
 
-        {/* Navigation Items with Spring Gliding Pill */}
-        <div style={{ display: "flex", alignItems: "center", gap: "4px", background: "#15120d", padding: "4px", borderRadius: "10px", border: "1px solid var(--border-subtle)", position: "relative" }}>
+        {/* Navigation Items with Spring Gliding Pill (Desktop >= 768px) */}
+        <div className="desktop-nav-items" style={{ display: "flex", alignItems: "center", gap: "4px", background: "#15120d", padding: "4px", borderRadius: "10px", border: "1px solid var(--border-subtle)", position: "relative" }}>
           {navItems.map((item) => {
             const isActive = activeTab === item.id;
             const NavIcon = item.icon;
@@ -166,6 +166,7 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenPalette }) => {
             );
           })}
         </div>
+
 
         {/* Right Section: Command Palette + Language Dropdown + User Status & Logout */}
         <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
@@ -363,6 +364,121 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenPalette }) => {
           </button>
         </div>
       </div>
+
+      {/* =========================================================================
+         NATIVE MOBILE BOTTOM NAVIGATION BAR (< 768px)
+         ========================================================================= */}
+      <div 
+        className="mobile-bottom-nav"
+        style={{
+          position: "fixed",
+          bottom: 0,
+          left: 0,
+          right: 0,
+          zIndex: 9999,
+          background: "rgba(18, 14, 10, 0.96)",
+          backdropFilter: "blur(16px)",
+          WebkitBackdropFilter: "blur(16px)",
+          borderTop: "1px solid rgba(245, 158, 11, 0.25)",
+          padding: "8px 12px calc(8px + env(safe-area-inset-bottom, 8px))",
+          boxShadow: "0 -10px 30px rgba(0, 0, 0, 0.85)"
+        }}
+      >
+        <div style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-around",
+          maxWidth: "500px",
+          margin: "0 auto"
+        }}>
+          {navItems.map((item) => {
+            const isActive = activeTab === item.id;
+            const NavIcon = item.icon;
+
+            return (
+              <button
+                key={item.id}
+                onClick={() => handleTabChange(item.id)}
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  gap: "3px",
+                  background: "transparent",
+                  border: "none",
+                  padding: "4px 8px",
+                  borderRadius: "8px",
+                  color: isActive ? "#f59e0b" : "var(--text-muted)",
+                  cursor: "pointer",
+                  minWidth: "56px"
+                }}
+              >
+                <div style={{
+                  width: "32px",
+                  height: "32px",
+                  borderRadius: "8px",
+                  background: isActive ? "rgba(245, 158, 11, 0.18)" : "transparent",
+                  border: isActive ? "1px solid rgba(245, 158, 11, 0.4)" : "1px solid transparent",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  transition: "all 0.15s ease"
+                }}>
+                  <NavIcon size={18} color={isActive ? "#f59e0b" : "var(--text-secondary)"} />
+                </div>
+                <span style={{
+                  fontSize: "0.68rem",
+                  fontWeight: isActive ? 800 : 500,
+                  letterSpacing: "-0.01em"
+                }}>
+                  {item.id === "dashboard" ? "Cockpit" :
+                   item.id === "new-decision" ? "New" :
+                   item.id === "memory-vault" ? "Vault" :
+                   item.id === "profile" ? "Profile" : "Guide"}
+                </span>
+              </button>
+            );
+          })}
+
+          {/* Dedicated Copilot Mobile Button */}
+          <button
+            onClick={() => {
+              playPopSound();
+              window.dispatchEvent(new Event("decisionos_open_chatbot"));
+            }}
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: "3px",
+              background: "transparent",
+              border: "none",
+              padding: "4px 8px",
+              borderRadius: "8px",
+              color: "#fef08a",
+              cursor: "pointer",
+              minWidth: "56px"
+            }}
+          >
+            <div style={{
+              width: "32px",
+              height: "32px",
+              borderRadius: "8px",
+              background: "linear-gradient(135deg, #f59e0b 0%, #ff6a00 100%)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              boxShadow: "0 0 12px rgba(245, 158, 11, 0.5)"
+            }}>
+              <Bot size={18} color="#090705" />
+            </div>
+            <span style={{ fontSize: "0.68rem", fontWeight: 800, color: "#f59e0b" }}>
+              Copilot
+            </span>
+          </button>
+        </div>
+      </div>
     </nav>
   );
 };
+

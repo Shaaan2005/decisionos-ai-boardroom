@@ -369,3 +369,80 @@ h1, h2, h3, h4, h5, h6 {
 .hover-scale:hover {
   transform: translate(-50%, -50%) scale(1.06) !important;
 }
+
+/* =========================================================================
+   MOBILE RESPONSIVENESS & TOUCH OPTIMIZATION (< 768px)
+   ========================================================================= */
+@media (min-width: 769px) {
+  .mobile-bottom-nav {
+    display: none !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .desktop-nav-items {
+    display: none !important;
+  }
+
+  /* Safe body padding for native mobile bottom nav */
+  body {
+    padding-bottom: 74px !important;
+  }
+
+
+  /* Responsive padding for main page wrappers */
+  .mobile-container {
+    padding: 16px 12px 40px !important;
+  }
+
+  /* Stack bento metrics to 2 columns on small screens */
+  .metrics-grid-responsive {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+  }
+
+  /* Full width for hero and cards */
+  .hero-responsive-card {
+    padding: 24px 16px !important;
+  }
+
+  /* Chat drawer full-screen on mobile */
+  .mobile-chat-fullscreen {
+    width: 100vw !important;
+    height: 100dvh !important;
+    max-height: 100dvh !important;
+    border-radius: 0 !important;
+    inset: 0 !important;
+    position: fixed !important;
+    bottom: 0 !important;
+    right: 0 !important;
+    left: 0 !important;
+    top: 0 !important;
+  }
+
+  /* Compact button styling on mobile */
+  .btn-primary, .btn-secondary {
+    padding: 10px 14px !important;
+    font-size: 0.85rem !important;
+  }
+
+  /* Prevent text cutoff in headlines */
+  h1 {
+    font-size: 1.85rem !important;
+    line-height: 1.2 !important;
+  }
+
+  h2 {
+    font-size: 1.45rem !important;
+  }
+
+  h3 {
+    font-size: 1.15rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .metrics-grid-responsive {
+    grid-template-columns: 1fr !important;
+  }
+}
