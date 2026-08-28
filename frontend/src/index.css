@@ -1,0 +1,371 @@
+@import url('https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,800,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+:root {
+  /* High-Performance Executive Palette */
+  --bg-primary: #090705;
+  --bg-secondary: #110e0a;
+  --bg-card: #15110c;
+  --bg-card-hover: #1c1710;
+  
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-medium: rgba(255, 255, 255, 0.14);
+  --border-amber: rgba(245, 158, 11, 0.4);
+  --border-active: #f59e0b;
+
+  --accent-amber: #f59e0b;
+  --accent-orange: #ff6a00;
+  --accent-primary: #f59e0b;
+  --accent-blue: #3b82f6;
+  --accent-indigo: #6366f1;
+  --accent-emerald: #10b981;
+  --accent-rose: #f43f5e;
+  --accent-cyan: #06b6d4;
+
+  --text-primary: #fdfdfd;
+  --text-secondary: #b5aba1;
+  --text-muted: #786f65;
+
+  --font-sans: 'Satoshi', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.6);
+  --shadow-amber-glow: 0 0 30px -5px rgba(245, 158, 11, 0.25);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  background-color: var(--bg-primary);
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Hardware-Accelerated Matrix Grid */
+.tech-grid {
+  position: fixed;
+  inset: 0;
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 32px 32px;
+  pointer-events: none;
+  z-index: 1;
+  transform: translateZ(0);
+  contain: strict;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(245, 158, 11, 0.4);
+}
+
+/* High-Performance Cards */
+.rzp-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  box-shadow: var(--shadow-card);
+  position: relative;
+  transition: border-color 0.12s ease, transform 0.12s ease;
+  contain: content;
+}
+
+.rzp-card-hover:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--border-amber);
+  transform: translateY(-2px);
+}
+
+.rzp-pill {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  padding: 3px 8px;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+/* Typography & Headings */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--text-primary);
+  font-weight: 800;
+  letter-spacing: -0.025em;
+}
+
+.font-mono {
+  font-family: var(--font-mono);
+}
+
+.gradient-text-amber {
+  background: linear-gradient(135deg, #ffffff 0%, #fef08a 40%, #f59e0b 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gradient-text-orange {
+  background: linear-gradient(135deg, #fed7aa 0%, #ff6a00 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Inputs & Form Controls */
+.input-field {
+  width: 100%;
+  background: #110e0a;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  padding: 12px 14px;
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 0.92rem;
+  outline: none;
+  transition: border-color 0.12s ease;
+}
+
+.input-field:focus {
+  border-color: var(--accent-amber);
+  background: #15120d;
+}
+
+.input-field::placeholder {
+  color: var(--text-muted);
+}
+
+.login-card {
+  animation: login-card-enter 0.45s ease-out both;
+}
+
+@keyframes login-card-enter {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 520px) {
+  .login-card {
+    padding: 28px 20px !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* High-Impact CTA Buttons */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #f59e0b;
+  color: #090705;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 800;
+  font-size: 0.92rem;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(245, 158, 11, 0.3);
+  transition: background 0.12s ease, transform 0.1s ease;
+  will-change: transform;
+}
+
+.btn-primary:hover {
+  background: #fbbf24;
+  transform: translateY(-1px);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-primary:disabled {
+  cursor: wait;
+  opacity: 0.75;
+  transform: none;
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-primary);
+  padding: 9px 16px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  border: 1px solid var(--border-medium);
+  cursor: pointer;
+  transition: background 0.12s ease, border-color 0.12s ease;
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.09);
+  border-color: rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+}
+
+/* Track Number Badges */
+.track-number {
+  font-family: var(--font-mono);
+  font-weight: 800;
+  font-size: 0.85rem;
+  color: var(--accent-amber);
+  padding: 2px 6px;
+  background: rgba(245, 158, 11, 0.12);
+  border-radius: 4px;
+  border: 1px solid rgba(245, 158, 11, 0.25);
+}
+
+/* High-Performance Surface Base */
+.glass-card {
+  background: #14100b;
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  box-shadow: var(--shadow-card);
+  position: relative;
+}
+
+.glass-card-hover:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--border-amber);
+}
+
+.glass-pill {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+}
+
+/* Cybernetic Terminal Corner Bracket Cards */
+.cyber-card {
+  position: relative;
+  background: #130f0a;
+  border: 1px solid rgba(245, 158, 11, 0.25);
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
+  transition: border-color 0.12s ease, transform 0.12s ease;
+}
+
+.cyber-card:hover {
+  border-color: rgba(245, 158, 11, 0.5);
+  transform: translateY(-2px);
+}
+
+/* Corner Bracket Accents (Top-Left & Bottom-Right) */
+.cyber-card::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: -1px;
+  width: 10px;
+  height: 10px;
+  border-top: 2px solid #f59e0b;
+  border-left: 2px solid #f59e0b;
+  border-top-left-radius: 12px;
+  pointer-events: none;
+}
+
+.cyber-card::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  right: -1px;
+  width: 10px;
+  height: 10px;
+  border-bottom: 2px solid #f59e0b;
+  border-right: 2px solid #f59e0b;
+  border-bottom-right-radius: 12px;
+  pointer-events: none;
+}
+
+/* Cyber Monospace Status Badge */
+.cyber-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 5px;
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  color: #fef08a;
+}
+
+/* Page Transition Wrapper (GPU-Accelerated 120 FPS) */
+.page-fade-in {
+  animation: page-fade-gpu 0.15s ease-out forwards;
+  will-change: opacity, transform;
+}
+
+@keyframes page-fade-gpu {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 4px, 0);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+/* Audio Waveform Equalizer Pulse (Zero-Reflow GPU Animation) */
+@keyframes audio-bar-pulse {
+  0% {
+    transform: scaleY(0.2);
+  }
+  100% {
+    transform: scaleY(1);
+  }
+}
+
+/* Stable Hover Scale */
+.hover-scale:hover {
+  transform: translate(-50%, -50%) scale(1.06) !important;
+}

@@ -1,0 +1,56 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: decisionos
+      POSTGRES_USER: decisionos
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in your deployment environment}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U decisionos -d decisionos"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - PROJECT_NAME=DecisionOS
+      - DATABASE_URL=postgresql+asyncpg://decisionos:${POSTGRES_PASSWORD}@db:5432/decisionos
+      - SYNC_DATABASE_URL=postgresql://decisionos:${POSTGRES_PASSWORD}@db:5432/decisionos
+      - CHROMA_PERSIST_DIR=/app/chroma_db
+      - DEFAULT_LLM_PROVIDER=${DEFAULT_LLM_PROVIDER:-simulated}
+      - SECRET_KEY=${SECRET_KEY:?Set SECRET_KEY to a unique 64+ character value in your deployment environment}
+      - COOKIE_SECURE=true
+      - BACKEND_CORS_ORIGINS=["http://localhost:3000"]
+    volumes:
+      - ./backend_data:/app/chroma_db
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  postgres_data:

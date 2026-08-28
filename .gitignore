@@ -1,0 +1,12 @@
+.env
+*.db
+__pycache__/
+*.py[cod]
+node_modules/
+dist/
+chroma_db/
+backend/chroma_db/
+backend_data/
+backend_db/
+frontend/dist/
+backend/.pytest_cache/
