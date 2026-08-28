@@ -1,4 +1,6 @@
 .env
+.venv/
+venv/
 *.db
 __pycache__/
 *.py[cod]
@@ -10,3 +12,4 @@ backend_data/
 backend_db/
 frontend/dist/
 backend/.pytest_cache/
+
