@@ -74,15 +74,16 @@ async def login_user(
     email_clean = payload.email.lower().strip()
 
     # Dynamic auto-seed for demo account if logging in with demo credentials
-    if email_clean == "demo@decisionos.ai" and payload.password == "demouser123":
+    if (email_clean == "demo@decisionos.ai" and payload.password == "demouser123") or \
+       (email_clean == "alex.mercer@decisionos.ai" and payload.password == "Password123!"):
         try:
             result = await db.execute(select(User).filter(User.email == email_clean))
             user = result.scalars().first()
             if not user:
                 user = User(
-                    email="demo@decisionos.ai",
-                    hashed_password=get_password_hash("demouser123"),
-                    full_name="Utkarsh Rai"
+                    email=email_clean,
+                    hashed_password=get_password_hash(payload.password),
+                    full_name="Utkarsh Rai" if "demo" in email_clean else "Alex Mercer"
                 )
                 db.add(user)
                 await db.flush()
@@ -111,10 +112,16 @@ async def login_user(
     result = await db.execute(select(User).filter(User.email == email_clean))
     user = result.scalars().first()
 
-    if not user or not verify_password(payload.password, user.hashed_password):
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="No account found with this email. Please click 'Create one' to register!",
+        )
+
+    if not verify_password(payload.password, user.hashed_password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid email or password",
+            detail="Incorrect password. Please check your password and try again.",
             headers={"WWW-Authenticate": "Bearer"},
         )
     
