@@ -60,7 +60,10 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenPalette }) => {
       zIndex: 50,
       background: "rgba(11, 9, 7, 0.94)",
       borderBottom: "1px solid var(--border-subtle)",
-      padding: "12px 24px"
+      padding: "clamp(8px, 2vw, 12px) clamp(10px, 3vw, 24px)",
+      width: "100%",
+      maxWidth: "100vw",
+      overflow: "hidden"
     }}>
       <div style={{
         maxWidth: "1400px",
@@ -68,9 +71,11 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenPalette }) => {
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
-        gap: "16px",
-        flexWrap: "wrap"
+        gap: "8px",
+        width: "100%",
+        flexWrap: "nowrap"
       }}>
+
         {/* Brand Logo */}
         <div 
           onClick={() => handleTabChange("dashboard")}
