@@ -18,9 +18,48 @@ logger = logging.getLogger("decisionos")
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Application startup & shutdown events."""
-    logger.info("DecisionOS application ready; database schema is managed by Alembic.")
+    logger.info("Initializing DecisionOS Database Tables...")
+    try:
+        from app.database.base import Base
+        from app.models.user import User, UserProfile
+        from app.models.decision import Decision
+        from app.models.report import DecisionReport
+        from app.core.security import get_password_hash
+        from sqlalchemy.future import select
+
+        async with async_engine.begin() as conn:
+            await conn.run_sync(Base.metadata.create_all)
+        logger.info("DecisionOS Database Tables ready.")
+
+        # Seed default demo account if it doesn't exist
+        from app.database.session import AsyncSessionLocal
+        async with AsyncSessionLocal() as session:
+            res = await session.execute(select(User).filter(User.email == "demo@decisionos.ai"))
+            if not res.scalars().first():
+                demo_user = User(
+                    email="demo@decisionos.ai",
+                    hashed_password=get_password_hash("demouser123"),
+                    full_name="Utkarsh Rai"
+                )
+                session.add(demo_user)
+                await session.flush()
+                demo_profile = UserProfile(
+                    user_id=demo_user.id,
+                    current_role="Founder & Full-Stack Engineer",
+                    career_goals="Scale scalable AI systems and achieve career independence.",
+                    default_risk_tolerance="moderate",
+                    core_values=["Learning Velocity", "High Agency", "Autonomy", "Long-term Upside"],
+                    personal_context="Building DecisionOS AI Personal Board of Directors."
+                )
+                session.add(demo_profile)
+                await session.commit()
+                logger.info("Seeded default demo user account (demo@decisionos.ai).")
+    except Exception as e:
+        logger.warning(f"Database initialization note: {e}")
+
     yield
     logger.info("Shutting down DecisionOS Application...")
+
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
