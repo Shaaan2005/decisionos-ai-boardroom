@@ -71,7 +71,44 @@ async def login_user(
     db: AsyncSession = Depends(get_db)
 ):
     """Authenticate an existing user and issue a JWT bearer token."""
-    result = await db.execute(select(User).filter(User.email == payload.email.lower()))
+    email_clean = payload.email.lower().strip()
+
+    # Dynamic auto-seed for demo account if logging in with demo credentials
+    if email_clean == "demo@decisionos.ai" and payload.password == "demouser123":
+        try:
+            result = await db.execute(select(User).filter(User.email == email_clean))
+            user = result.scalars().first()
+            if not user:
+                user = User(
+                    email="demo@decisionos.ai",
+                    hashed_password=get_password_hash("demouser123"),
+                    full_name="Utkarsh Rai"
+                )
+                db.add(user)
+                await db.flush()
+                profile = UserProfile(
+                    user_id=user.id,
+                    current_role="Founder & Full-Stack Engineer",
+                    career_goals="Scale scalable AI systems and achieve career independence.",
+                    default_risk_tolerance="moderate",
+                    core_values=["Learning Velocity", "High Agency", "Autonomy", "Long-term Upside"],
+                    personal_context="Building DecisionOS AI Personal Board of Directors."
+                )
+                db.add(profile)
+                await db.commit()
+            token = create_access_token(subject=user.id)
+            set_auth_cookie(response, token)
+            return TokenResponse(
+                access_token=token,
+                token_type="bearer",
+                user_id=user.id,
+                email=user.email,
+                full_name=user.full_name
+            )
+        except Exception:
+            pass
+
+    result = await db.execute(select(User).filter(User.email == email_clean))
     user = result.scalars().first()
 
     if not user or not verify_password(payload.password, user.hashed_password):
