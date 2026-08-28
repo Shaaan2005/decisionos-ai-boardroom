@@ -147,7 +147,7 @@ export const DecisionOSBootLoader = ({ onComplete }) => {
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
-        padding: "36px 48px",
+        padding: "clamp(16px, 4vw, 36px) clamp(16px, 4vw, 48px)",
         color: "#f5f0e8",
         fontFamily: "'JetBrains Mono', 'Satoshi', monospace",
         userSelect: "none",
@@ -167,7 +167,7 @@ export const DecisionOSBootLoader = ({ onComplete }) => {
           top: "50%",
           left: "50%",
           transform: "translate(-50%, -50%)",
-          width: "600px",
+          width: "min(600px, 90vw)",
           height: "400px",
           borderRadius: "50%",
           background: "radial-gradient(ellipse, rgba(245, 158, 11, 0.22) 0%, transparent 70%)",
@@ -183,9 +183,10 @@ export const DecisionOSBootLoader = ({ onComplete }) => {
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
-        fontSize: "0.76rem",
+        fontSize: "0.72rem",
         color: "var(--text-muted)",
-        letterSpacing: "0.1em"
+        letterSpacing: "0.08em",
+        gap: "8px"
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
           <div style={{
@@ -197,12 +198,12 @@ export const DecisionOSBootLoader = ({ onComplete }) => {
             transition: "all 0.3s ease"
           }} />
           <span style={{ color: "#b5aba1", fontWeight: 700 }}>
-            {isReady ? "SYS.STATUS: QUORUM_ACTIVE" : hasStarted ? "SYS.BOOT_SEQUENCE // V1.0" : "SYS.STANDBY // V1.0"}
+            {isReady ? "SYS: READY" : hasStarted ? "BOOTING..." : "STANDBY"}
           </span>
         </div>
 
-        <div style={{ display: "flex", alignItems: "center", gap: "12px", fontFamily: "var(--font-mono)" }}>
-          <span>MEMORY_VAULT: CHROMADB</span>
+        <div style={{ display: "flex", alignItems: "center", gap: "8px", fontFamily: "var(--font-mono)" }}>
+          <span style={{ display: "none" }} className="desktop-memory-badge">CHROMADB</span>
           <button
             type="button"
             aria-label="Skip system boot sequence"
@@ -214,11 +215,11 @@ export const DecisionOSBootLoader = ({ onComplete }) => {
             style={{
               padding: "4px 10px",
               borderRadius: "6px",
-              border: "1px solid rgba(255, 255, 255, 0.15)",
-              background: "rgba(255, 255, 255, 0.05)",
+              border: "1px solid rgba(245, 158, 11, 0.4)",
+              background: "rgba(245, 158, 11, 0.12)",
               color: "#fbbf24",
               fontSize: "0.72rem",
-              fontWeight: 700,
+              fontWeight: 800,
               cursor: "pointer"
             }}
           >
@@ -232,19 +233,22 @@ export const DecisionOSBootLoader = ({ onComplete }) => {
         position: "relative",
         zIndex: 2,
         textAlign: "center",
+        width: "100%",
         maxWidth: "800px",
-        margin: "0 auto"
+        margin: "0 auto",
+        padding: "0 8px"
       }}>
         {/* Main Title Wordmark */}
         <div style={{
-          fontSize: "clamp(2.4rem, 6vw, 4.2rem)",
+          fontSize: "clamp(1.6rem, 7vw, 3.8rem)",
           fontWeight: 900,
           letterSpacing: "-0.03em",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
           gap: "2px",
-          marginBottom: "10px"
+          marginBottom: "10px",
+          wordBreak: "break-word"
         }}>
           <span style={{ color: "#ffffff" }}>decisionos</span>
           <span style={{ color: "#f59e0b", padding: "0 2px" }}>/</span>
@@ -262,6 +266,7 @@ export const DecisionOSBootLoader = ({ onComplete }) => {
             _
           </motion.span>
         </div>
+
 
         {/* State 1: Prompt to Initialize */}
         {!hasStarted && (

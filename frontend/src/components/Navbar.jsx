@@ -98,7 +98,7 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenPalette }) => {
               <span style={{ fontSize: "1.25rem", fontWeight: 900, letterSpacing: "-0.03em" }}>
                 Decision<span style={{ color: "#f59e0b" }}>OS</span>
               </span>
-              <span style={{
+              <span className="desktop-only" style={{
                 fontFamily: "var(--font-mono)",
                 fontSize: "0.68rem",
                 textTransform: "uppercase",
@@ -112,7 +112,7 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenPalette }) => {
                 {t("nav.convening", "Quorum")}
               </span>
             </div>
-            <p style={{ fontSize: "0.72rem", color: "var(--text-muted)", marginTop: "-2px" }}>
+            <p className="desktop-only" style={{ fontSize: "0.72rem", color: "var(--text-muted)", marginTop: "-2px" }}>
               Personal Board of Directors
             </p>
           </div>
@@ -167,17 +167,16 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenPalette }) => {
           })}
         </div>
 
-
-        {/* Right Section: Command Palette + Language Dropdown + User Status & Logout */}
-        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-          {/* Quick Board Copilot Trigger */}
+        {/* Right Section: Language Dropdown + User Status & Logout */}
+        <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0 }}>
+          {/* Quick Board Copilot Trigger (Desktop only) */}
           <button
             type="button"
             onClick={() => {
               playPopSound();
               window.dispatchEvent(new Event("decisionos_open_chatbot"));
             }}
-            className="btn-secondary"
+            className="btn-secondary desktop-only"
             title="Open AI Board Copilot"
             style={{
               display: "flex",
@@ -195,7 +194,7 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenPalette }) => {
             <span>Copilot</span>
           </button>
 
-          {/* Search / Command Palette Trigger Button */}
+          {/* Search / Command Palette Trigger Button (Desktop only) */}
           {onOpenPalette && (
             <button
               type="button"
@@ -203,7 +202,7 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenPalette }) => {
                 playPopSound();
                 onOpenPalette();
               }}
-              className="btn-secondary"
+              className="btn-secondary desktop-only"
               title="Open Command Palette (Ctrl+K / Cmd+K)"
               style={{
                 display: "flex",
@@ -257,7 +256,7 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenPalette }) => {
               }}
             >
               <span>{currentLanguageConfig.flag}</span>
-              <span style={{ fontFamily: "var(--font-mono)" }}>{currentLanguageConfig.nativeName}</span>
+              <span className="desktop-only" style={{ fontFamily: "var(--font-mono)" }}>{currentLanguageConfig.nativeName}</span>
               <ChevronDown size={14} style={{ transform: langMenuOpen ? "rotate(180deg)" : "none", transition: "transform 0.2s" }} />
             </button>
 
@@ -317,21 +316,26 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenPalette }) => {
 
           {user && (
             <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-              <div style={{
-                width: "32px",
-                height: "32px",
-                borderRadius: "6px",
-                background: "#f59e0b",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontWeight: 900,
-                fontSize: "0.82rem",
-                color: "#0b0907"
-              }}>
+              <div 
+                onClick={() => handleTabChange("profile")}
+                title="View Profile & Values"
+                style={{
+                  width: "32px",
+                  height: "32px",
+                  borderRadius: "6px",
+                  background: "#f59e0b",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontWeight: 900,
+                  fontSize: "0.82rem",
+                  color: "#0b0907",
+                  cursor: "pointer"
+                }}
+              >
                 {user.full_name?.charAt(0).toUpperCase() || "U"}
               </div>
-              <div style={{ display: "flex", flexDirection: "column" }}>
+              <div className="desktop-only" style={{ display: "flex", flexDirection: "column" }}>
                 <span style={{ fontSize: "0.82rem", fontWeight: 700, color: "var(--text-primary)" }}>
                   {user.full_name}
                 </span>
@@ -364,6 +368,7 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenPalette }) => {
           </button>
         </div>
       </div>
+
 
       {/* =========================================================================
          NATIVE MOBILE BOTTOM NAVIGATION BAR (< 768px)

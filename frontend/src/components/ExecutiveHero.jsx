@@ -15,13 +15,13 @@ export const ExecutiveHero = ({ onNewDecision, onScrollDown }) => {
   ];
 
   return (
-    <div className="laser-shimmer-card" style={{ marginBottom: "36px" }}>
-      <div style={{
+    <div className="laser-shimmer-card" style={{ marginBottom: "28px", width: "100%" }}>
+      <div className="hero-responsive-card" style={{
         position: "relative",
         width: "100%",
         borderRadius: "13px",
         overflow: "hidden",
-        padding: "44px 40px",
+        padding: "clamp(20px, 4vw, 44px) clamp(16px, 4vw, 40px)",
         background: "linear-gradient(135deg, #18140e 0%, #0d0b08 100%)",
         boxShadow: "0 20px 50px -15px rgba(0, 0, 0, 0.9)",
       }}>
@@ -30,7 +30,7 @@ export const ExecutiveHero = ({ onNewDecision, onScrollDown }) => {
           position: "absolute",
           top: "-50%",
           right: "-10%",
-          width: "600px",
+          width: "min(600px, 90vw)",
           height: "600px",
           borderRadius: "50%",
           background: "radial-gradient(circle, rgba(245, 158, 11, 0.22) 0%, transparent 60%)",
@@ -43,18 +43,20 @@ export const ExecutiveHero = ({ onNewDecision, onScrollDown }) => {
           flexWrap: "wrap",
           alignItems: "center",
           justifyContent: "space-between",
-          gap: "32px",
+          gap: "24px",
           position: "relative",
-          zIndex: 2
+          zIndex: 2,
+          width: "100%"
         }}>
           {/* Left Hero Content */}
-          <div style={{ flex: "1 1 580px", maxWidth: "720px" }}>
+          <div style={{ flex: "1 1 100%", maxWidth: "720px", width: "100%" }}>
             {/* Pulsing Live Badge */}
             <motion.div 
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              style={{ display: "inline-flex", alignItems: "center", gap: "8px", padding: "5px 14px", borderRadius: "20px", background: "rgba(245, 158, 11, 0.16)", border: "1px solid rgba(245, 158, 11, 0.4)", marginBottom: "18px" }}
+              style={{ display: "inline-flex", alignItems: "center", gap: "8px", padding: "5px 14px", borderRadius: "20px", background: "rgba(245, 158, 11, 0.16)", border: "1px solid rgba(245, 158, 11, 0.4)", marginBottom: "16px", maxWidth: "100%" }}
             >
+
               <span style={{ position: "relative", display: "flex", width: "8px", height: "8px" }}>
                 <span className="animate-ping" style={{ position: "absolute", display: "inline-flex", height: "100%", width: "100%", borderRadius: "50%", background: "#f59e0b", opacity: 0.75 }} />
                 <span style={{ position: "relative", display: "inline-flex", borderRadius: "50%", height: "8px", width: "8px", background: "#f59e0b" }} />
