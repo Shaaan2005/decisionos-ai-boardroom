@@ -123,27 +123,33 @@ export const BoardroomView = ({ report, decision, isDeliberating }) => {
   const fullAnalysisText = delibData?.analysis || 
     "Evaluating strategic trade-offs, financial runway preservation, and long-term execution velocity across all board directives...";
 
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [showFinalVerdict, setShowFinalVerdict] = useState(false);
+
   // Play crisp entrance sound & voice when active agent changes
   useEffect(() => {
-    if (isSimulating || isDeliberating) {
-      if (soundEnabled) {
-        playAgentTurnSound(activeAgent.id);
-      }
+    if (voiceEnabled && fullAnalysisText) {
+      setIsSpeaking(true);
+      speakPersonaText(fullAnalysisText, activeAgent.id, {
+        speedMultiplier,
+        langCode: "en",
+        onStart: () => setIsSpeaking(true),
+        onEnd: () => setIsSpeaking(false),
+        onError: () => setIsSpeaking(false)
+      });
+    } else {
+      setIsSpeaking(false);
+    }
 
-      if (voiceEnabled && fullAnalysisText) {
-        speakPersonaText(fullAnalysisText, activeAgent.id, {
-          speedMultiplier,
-          langCode: "en"
-        });
-      }
+    if (soundEnabled && (isSimulating || isDeliberating)) {
+      playAgentTurnSound(activeAgent.id);
     }
 
     return () => {
       stopSpeech();
+      setIsSpeaking(false);
     };
-  }, [activeAgentIndex, isSimulating, isDeliberating, soundEnabled, voiceEnabled, speedMultiplier]);
-
-  const [showFinalVerdict, setShowFinalVerdict] = useState(false);
+  }, [activeAgentIndex, isSimulating, isDeliberating, soundEnabled, voiceEnabled, speedMultiplier, fullAnalysisText, activeAgent.id]);
 
   // Turn-by-Turn Typewriter Loop for Spotlight Panel
   useEffect(() => {
@@ -152,18 +158,25 @@ export const BoardroomView = ({ report, decision, isDeliberating }) => {
     const currentCount = typedChars[activeAgentIndex] || 0;
 
     if (currentCount < fullAnalysisText.length) {
-      const charDelay = 16 / speedMultiplier; // ~16ms per character
+      // Calculate delay: if voice is enabled, type at realistic speech cadence (~28ms/char); otherwise ~16ms/char
+      const baseDelay = voiceEnabled ? 28 : 16;
+      const charDelay = baseDelay / speedMultiplier;
       const timer = setTimeout(() => {
         const nextCount = Math.min(fullAnalysisText.length, currentCount + 2);
         setTypedChars(prev => ({ ...prev, [activeAgentIndex]: nextCount }));
 
-        if (soundEnabled && nextCount % 4 === 0) {
+        if (soundEnabled && nextCount % 6 === 0) {
           playTypingSound();
         }
       }, charDelay);
 
       return () => clearTimeout(timer);
     } else {
+      // If voice is ON and advisor is still speaking, WAIT for speech to finish before advancing!
+      if (voiceEnabled && isSpeaking) {
+        return;
+      }
+
       // Check if this was the final advisor (Chairman)
       if (activeAgentIndex >= agents.length - 1) {
         const finishTimer = setTimeout(() => {
@@ -178,7 +191,7 @@ export const BoardroomView = ({ report, decision, isDeliberating }) => {
         return () => clearTimeout(finishTimer);
       }
 
-      // Transition to next agent
+      // Transition to next agent with natural breathing pause
       const transitionTimer = setTimeout(() => {
         if (soundEnabled) playPopSound();
 
@@ -189,11 +202,29 @@ export const BoardroomView = ({ report, decision, isDeliberating }) => {
         });
 
         setActiveAgentIndex((prev) => prev + 1);
-      }, 1400 / speedMultiplier);
+      }, (voiceEnabled ? 1600 : 1200) / speedMultiplier);
 
       return () => clearTimeout(transitionTimer);
     }
-  }, [isSimulating, isDeliberating, activeAgentIndex, typedChars, fullAnalysisText, speedMultiplier, soundEnabled, agents.length, finalConsensusScore]);
+  }, [isSimulating, isDeliberating, activeAgentIndex, typedChars, fullAnalysisText, speedMultiplier, soundEnabled, voiceEnabled, isSpeaking, agents.length, finalConsensusScore]);
+
+  // Manual Trigger to Speak or Stop Current Advisor Analysis
+  const toggleAdvisorVoice = () => {
+    playClickSound();
+    if (isSpeaking) {
+      stopSpeech();
+      setIsSpeaking(false);
+    } else {
+      setIsSpeaking(true);
+      speakPersonaText(fullAnalysisText, activeAgent.id, {
+        speedMultiplier,
+        langCode: "en",
+        onStart: () => setIsSpeaking(true),
+        onEnd: () => setIsSpeaking(false),
+        onError: () => setIsSpeaking(false)
+      });
+    }
+  };
 
   // Toggle Live Simulation
   const toggleSimulation = () => {
@@ -206,7 +237,7 @@ export const BoardroomView = ({ report, decision, isDeliberating }) => {
       setIsSimulating(true);
     } else {
       setIsSimulating(false);
-      stopSpeech();
+      // Notice: Do NOT abruptly stop speech if voiceEnabled is true so the user can continue listening while paused!
     }
   };
 
@@ -214,12 +245,14 @@ export const BoardroomView = ({ report, decision, isDeliberating }) => {
   const restartSimulation = () => {
     playClickSound();
     stopSpeech();
+    setIsSpeaking(false);
     setTypedChars({});
     setActiveAgentIndex(0);
     setShowFinalVerdict(false);
     setCurrentConsensus(55);
     setIsSimulating(true);
   };
+
 
   // Play verdict gong on arrival
   const prevReportRef = useRef(null);
@@ -640,22 +673,58 @@ export const BoardroomView = ({ report, decision, isDeliberating }) => {
               </div>
             </div>
 
-            <div style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "8px",
-              padding: "5px 14px",
-              borderRadius: "20px",
-              background: `${activeAgent.color}22`,
-              border: `1px solid ${activeAgent.color}66`,
-              color: activeAgent.color,
-              fontSize: "0.78rem",
-              fontWeight: 800,
-              textTransform: "uppercase"
-            }}>
-              <span style={{ width: "8px", height: "8px", borderRadius: "50%", background: activeAgent.color, boxShadow: `0 0 8px ${activeAgent.color}` }} />
-              <span>Speaking Now</span>
+            <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
+              <button
+                type="button"
+                onClick={toggleAdvisorVoice}
+                className="hover-lift"
+                title={isSpeaking ? "Stop Voice Narration" : "Listen to this Advisor's analysis aloud"}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "6px",
+                  padding: "5px 13px",
+                  borderRadius: "20px",
+                  background: isSpeaking ? "rgba(244, 63, 94, 0.22)" : `${activeAgent.color}22`,
+                  border: `1px solid ${isSpeaking ? "#f43f5e" : `${activeAgent.color}66`}`,
+                  color: isSpeaking ? "#fda4af" : activeAgent.color,
+                  fontSize: "0.78rem",
+                  fontWeight: 700,
+                  cursor: "pointer",
+                  transition: "all 0.15s ease"
+                }}
+              >
+                {isSpeaking ? (
+                  <>
+                    <VolumeX size={14} color="#f43f5e" />
+                    <span>Stop Voice</span>
+                  </>
+                ) : (
+                  <>
+                    <Volume2 size={14} color={activeAgent.color} />
+                    <span>Listen Aloud</span>
+                  </>
+                )}
+              </button>
+
+              <div style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+                padding: "5px 14px",
+                borderRadius: "20px",
+                background: `${activeAgent.color}18`,
+                border: `1px solid ${activeAgent.color}44`,
+                color: activeAgent.color,
+                fontSize: "0.78rem",
+                fontWeight: 800,
+                textTransform: "uppercase"
+              }}>
+                <span style={{ width: "8px", height: "8px", borderRadius: "50%", background: activeAgent.color, boxShadow: `0 0 8px ${activeAgent.color}` }} />
+                <span>{isSpeaking ? "Speaking Now" : "Reviewing"}</span>
+              </div>
             </div>
+
           </div>
 
           <div>
