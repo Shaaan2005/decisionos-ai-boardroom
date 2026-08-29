@@ -1,13 +1,28 @@
 {
+  "id": "decisionos-ai-boardroom",
   "name": "DecisionOS - AI Personal Board of Directors",
   "short_name": "DecisionOS",
-  "description": "Executive Personal AI Board of Directors (CEO, CFO, CTO, Risk Analyst, Mentor, Chairman).",
+  "description": "Autonomous executive AI Personal Board of Directors powered by multi-agent consensus.",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
-  "orientation": "portrait",
+  "display_override": [
+    "window-controls-overlay",
+    "standalone",
+    "minimal-ui"
+  ],
+  "orientation": "portrait-primary",
   "background_color": "#0b0907",
   "theme_color": "#0b0907",
-  "categories": ["business", "productivity", "utilities"],
+  "lang": "en",
+  "dir": "ltr",
+  "categories": [
+    "business",
+    "productivity",
+    "utilities",
+    "finance"
+  ],
+  "prefer_related_applications": false,
   "icons": [
     {
       "src": "/decisionos-logo.png",
@@ -20,6 +35,38 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "New Decision",
+      "short_name": "New",
+      "description": "Submit a strategic dilemma to your AI Board",
+      "url": "/",
+      "icons": [{ "src": "/decisionos-logo.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Memory Vault",
+      "short_name": "Vault",
+      "description": "View historical board lessons & precedents",
+      "url": "/",
+      "icons": [{ "src": "/decisionos-logo.png", "sizes": "192x192" }]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshot-wide.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "DecisionOS Executive Cockpit & Boardroom"
+    },
+    {
+      "src": "/screenshot-narrow.png",
+      "sizes": "720x1280",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "DecisionOS Mobile Boardroom"
     }
   ]
 }
