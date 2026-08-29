@@ -8,6 +8,7 @@
   "display": "standalone",
   "display_override": [
     "window-controls-overlay",
+    "tabbed",
     "standalone",
     "minimal-ui"
   ],
@@ -50,7 +51,7 @@
       ],
       "icons": [
         {
-          "src": "/decisionos-logo.png",
+          "src": "/icon-192.png",
           "sizes": "192x192"
         }
       ]
@@ -65,6 +66,9 @@
   "scope_extensions": [
     {
       "origin": "https://decisionos-ai-boardroom.vercel.app"
+    },
+    {
+      "origin": "https://decisionos-ai-boardroom.onrender.com"
     }
   ],
   "launch_handler": {
@@ -97,16 +101,28 @@
   ],
   "icons": [
     {
-      "src": "/decisionos-logo.png",
+      "src": "/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
-      "src": "/decisionos-logo.png",
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ],
   "shortcuts": [
@@ -115,14 +131,14 @@
       "short_name": "New",
       "description": "Submit a strategic dilemma to your AI Board",
       "url": "/",
-      "icons": [{ "src": "/decisionos-logo.png", "sizes": "192x192" }]
+      "icons": [{ "src": "/icon-96.png", "sizes": "96x96", "type": "image/png" }]
     },
     {
       "name": "Memory Vault",
       "short_name": "Vault",
       "description": "View historical board lessons & precedents",
       "url": "/",
-      "icons": [{ "src": "/decisionos-logo.png", "sizes": "192x192" }]
+      "icons": [{ "src": "/icon-96.png", "sizes": "96x96", "type": "image/png" }]
     }
   ],
   "screenshots": [
