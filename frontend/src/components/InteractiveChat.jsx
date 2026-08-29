@@ -29,24 +29,31 @@ export const InteractiveChat = ({ decisionId }) => {
   const toggleVoiceInput = () => {
     playPopSound();
     if (!isSpeechRecognitionSupported()) {
-      alert("Voice input is not supported in this browser. Please use Chrome, Edge, or Brave.");
+      alert("Voice input is not supported in this browser. Please use Chrome, Edge, Safari, or Brave.");
       return;
     }
 
     if (isListening) {
       if (recognizerRef.current) {
-        recognizerRef.current.stop();
+        try { recognizerRef.current.stop(); } catch (_) {}
       }
+      recognizerRef.current = null;
       setIsListening(false);
     } else {
+      const initialText = question;
       const recognizer = createSpeechRecognizer({
+        continuous: true,
+        onStart: () => {
+          setIsListening(true);
+        },
         onResult: ({ combined }) => {
           if (combined) {
-            setQuestion(combined);
+            const separator = initialText && !initialText.endsWith(" ") ? " " : "";
+            setQuestion(initialText ? `${initialText}${separator}${combined}` : combined);
           }
         },
         onError: (err) => {
-          console.log("Voice input error:", err);
+          console.warn("Voice input error:", err);
           setIsListening(false);
         },
         onEnd: () => {
@@ -56,11 +63,16 @@ export const InteractiveChat = ({ decisionId }) => {
 
       if (recognizer) {
         recognizerRef.current = recognizer;
-        recognizer.start();
-        setIsListening(true);
+        try {
+          recognizer.start();
+          setIsListening(true);
+        } catch (_) {
+          setIsListening(false);
+        }
       }
     }
   };
+
   const [messages, setMessages] = useState([
     {
       responder: "Chairman of the Board",

@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { api } from "../api/client";
 import { 
   Plus, 
@@ -16,11 +16,11 @@ import {
   MicOff
 } from "lucide-react";
 import { playPopSound, playRemoveSound, playSubmitSound, playClickSound, playErrorSound } from "../utils/audioUtils";
-import { isSpeechRecognitionSupported, createSpeechRecognizer } from "../utils/voiceInputUtils";
+import { isSpeechRecognitionSupported, createSpeechRecognizer, getLanguageSpeechCode } from "../utils/voiceInputUtils";
 import { useLanguage } from "../context/LanguageContext";
 
 export const NewDecisionPage = ({ onCancel, onCreated }) => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("Career & Business");
@@ -33,30 +33,61 @@ export const NewDecisionPage = ({ onCancel, onCreated }) => {
   const [activeDictationField, setActiveDictationField] = useState(null); // "title" | "description" | null
   const recognizerRef = useRef(null);
 
+  // Clean up speech recognition on unmount
+  useEffect(() => {
+    return () => {
+      if (recognizerRef.current) {
+        try { recognizerRef.current.stop(); } catch (_) {}
+      }
+    };
+  }, []);
+
   const toggleDictation = (field) => {
     playPopSound();
     if (!isSpeechRecognitionSupported()) {
-      alert("Voice dictation is not supported in this browser. Please use Chrome, Edge, or Brave.");
+      playErrorSound();
+      setError("Voice dictation is not supported in this browser. Please use Chrome, Edge, Safari, or Brave.");
       return;
     }
 
     if (activeDictationField === field) {
-      if (recognizerRef.current) recognizerRef.current.stop();
+      if (recognizerRef.current) {
+        try { recognizerRef.current.stop(); } catch (_) {}
+      }
+      recognizerRef.current = null;
       setActiveDictationField(null);
     } else {
-      if (recognizerRef.current) recognizerRef.current.stop();
+      if (recognizerRef.current) {
+        try { recognizerRef.current.stop(); } catch (_) {}
+      }
+
+      setError("");
+      const initialText = field === "title" ? title : description;
+      const speechLang = getLanguageSpeechCode(language || "en");
 
       const recognizer = createSpeechRecognizer({
+        lang: speechLang,
+        continuous: true,
+        onStart: () => {
+          setActiveDictationField(field);
+        },
         onResult: ({ combined }) => {
           if (combined) {
+            const separator = initialText && !initialText.endsWith(" ") ? " " : "";
+            const newText = initialText ? `${initialText}${separator}${combined}` : combined;
             if (field === "title") {
-              setTitle(combined);
+              setTitle(newText);
             } else if (field === "description") {
-              setDescription(combined);
+              setDescription(newText);
             }
           }
         },
-        onError: () => {
+        onError: (err) => {
+          console.warn("Dictation error:", err);
+          if (err.error === "not-allowed" || err.error === "permission-denied") {
+            setError(err.message || "Microphone access was denied. Please allow microphone permissions in your browser URL bar.");
+            playErrorSound();
+          }
           setActiveDictationField(null);
         },
         onEnd: () => {
@@ -66,11 +97,18 @@ export const NewDecisionPage = ({ onCancel, onCreated }) => {
 
       if (recognizer) {
         recognizerRef.current = recognizer;
-        recognizer.start();
-        setActiveDictationField(field);
+        try {
+          recognizer.start();
+          setActiveDictationField(field);
+        } catch (startErr) {
+          console.error("Failed to start speech recognition:", startErr);
+          setError("Failed to start microphone. Please check your browser mic permissions.");
+          setActiveDictationField(null);
+        }
       }
     }
   };
+
   
   const [options, setOptions] = useState([
     {
