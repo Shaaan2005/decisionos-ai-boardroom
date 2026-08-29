@@ -135,38 +135,46 @@ export const AvatarCropModal = ({ isOpen, imageSrc, onClose, onApply }) => {
     }
   };
 
-  if (!isOpen) return null;
-
   return (
+
     <AnimatePresence>
-      <div style={{
-        position: "fixed",
-        inset: 0,
-        zIndex: 100000,
-        background: "rgba(0, 0, 0, 0.85)",
-        backdropFilter: "blur(12px)",
-        WebkitBackdropFilter: "blur(12px)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "16px"
-      }}>
+      {isOpen && imageSrc && (
         <motion.div
-          initial={{ scale: 0.92, opacity: 0, y: 15 }}
-          animate={{ scale: 1, opacity: 1, y: 0 }}
-          exit={{ scale: 0.92, opacity: 0, y: 15 }}
-          transition={{ type: "spring", damping: 25, stiffness: 350 }}
+          key="avatar-crop-backdrop"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
           style={{
-            width: "min(440px, 94vw)",
-            background: "#14100b",
-            border: "1px solid rgba(245, 158, 11, 0.4)",
-            borderRadius: "14px",
-            boxShadow: "0 25px 60px rgba(0, 0, 0, 0.95), 0 0 35px rgba(245, 158, 11, 0.2)",
-            overflow: "hidden",
+            position: "fixed",
+            inset: 0,
+            zIndex: 100000,
+            background: "rgba(0, 0, 0, 0.85)",
+            backdropFilter: "blur(12px)",
+            WebkitBackdropFilter: "blur(12px)",
             display: "flex",
-            flexDirection: "column"
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "16px"
           }}
         >
+          <motion.div
+            key="avatar-crop-modal"
+            initial={{ scale: 0.92, opacity: 0, y: 15 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            exit={{ scale: 0.92, opacity: 0, y: 15 }}
+            transition={{ type: "spring", damping: 25, stiffness: 350 }}
+            style={{
+              width: "min(440px, 94vw)",
+              background: "#14100b",
+              border: "1px solid rgba(245, 158, 11, 0.4)",
+              borderRadius: "14px",
+              boxShadow: "0 25px 60px rgba(0, 0, 0, 0.95), 0 0 35px rgba(245, 158, 11, 0.2)",
+              overflow: "hidden",
+              display: "flex",
+              flexDirection: "column"
+            }}
+          >
+
           {/* Header */}
           <div style={{
             padding: "16px 20px",
@@ -375,7 +383,9 @@ export const AvatarCropModal = ({ isOpen, imageSrc, onClose, onApply }) => {
             </div>
           </div>
         </motion.div>
-      </div>
+      </motion.div>
+      )}
     </AnimatePresence>
   );
 };
+
