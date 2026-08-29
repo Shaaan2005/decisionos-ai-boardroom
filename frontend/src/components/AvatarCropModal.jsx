@@ -1,25 +1,26 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import { X, ZoomIn, ZoomOut, RotateCw, RefreshCw, Check, Loader2, Image as ImageIcon } from "lucide-react";
 import { playClickSound, playSubmitSound, playPopSound } from "../utils/audioUtils";
 
 export const AvatarCropModal = ({ isOpen, imageSrc, onClose, onApply }) => {
   const [zoom, setZoom] = useState(1);
-  const [rotation, setRotation] = useState(0); // in degrees: 0, 90, 180, 270
+  const [rotation, setRotation] = useState(0); // 0, 90, 180, 270
   const [pan, setPan] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [saving, setSaving] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
 
   const containerRef = useRef(null);
   const imageRef = useRef(null);
 
-  // Reset state when opening a new image
+  // Reset parameters whenever a new image is loaded
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && imageSrc) {
       setZoom(1);
       setRotation(0);
       setPan({ x: 0, y: 0 });
+      setImageLoaded(false);
     }
   }, [isOpen, imageSrc]);
 
@@ -69,7 +70,7 @@ export const AvatarCropModal = ({ isOpen, imageSrc, onClose, onApply }) => {
     setRotation((prev) => (prev + 90) % 360);
   };
 
-  // Reset to original center & 1.0x
+  // Reset to default
   const handleReset = () => {
     playPopSound();
     setZoom(1);
@@ -77,7 +78,7 @@ export const AvatarCropModal = ({ isOpen, imageSrc, onClose, onApply }) => {
     setPan({ x: 0, y: 0 });
   };
 
-  // Crop & Export on Apply
+  // Crop & Export to 256x256 circular JPEG
   const handleCropAndSave = async () => {
     if (!imageRef.current) return;
     setSaving(true);
@@ -90,35 +91,30 @@ export const AvatarCropModal = ({ isOpen, imageSrc, onClose, onApply }) => {
       const ctx = canvas.getContext("2d");
 
       const img = imageRef.current;
-      const naturalWidth = img.naturalWidth || img.width;
-      const naturalHeight = img.naturalHeight || img.height;
+      const naturalWidth = img.naturalWidth || img.width || 300;
+      const naturalHeight = img.naturalHeight || img.height || 300;
 
-      // Circular crop clip
+      // Circle Clip Mask
       ctx.beginPath();
       ctx.arc(outputSize / 2, outputSize / 2, outputSize / 2, 0, Math.PI * 2);
       ctx.closePath();
       ctx.clip();
 
       ctx.save();
-      // Move to canvas center
       ctx.translate(outputSize / 2, outputSize / 2);
-      // Apply rotation
       ctx.rotate((rotation * Math.PI) / 180);
 
-      // Sizing calculation relative to the 240px circle in UI
-      const circleUiDiameter = 240;
+      const circleUiDiameter = 220;
       const baseScale = Math.max(circleUiDiameter / naturalWidth, circleUiDiameter / naturalHeight);
       const totalScale = (outputSize / circleUiDiameter) * baseScale * zoom;
-
-      // Apply pan
       const panRatio = outputSize / circleUiDiameter;
+
       ctx.translate(pan.x * panRatio, pan.y * panRatio);
 
-      // Draw image centered
       ctx.drawImage(
         img,
-        -naturalWidth / 2 * totalScale,
-        -naturalHeight / 2 * totalScale,
+        (-naturalWidth / 2) * totalScale,
+        (-naturalHeight / 2) * totalScale,
         naturalWidth * totalScale,
         naturalHeight * totalScale
       );
@@ -135,257 +131,273 @@ export const AvatarCropModal = ({ isOpen, imageSrc, onClose, onApply }) => {
     }
   };
 
+  if (!isOpen || !imageSrc) return null;
+
   return (
-
-    <AnimatePresence>
-      {isOpen && imageSrc && (
-        <motion.div
-          key="avatar-crop-backdrop"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          style={{
-            position: "fixed",
-            inset: 0,
-            zIndex: 100000,
-            background: "rgba(0, 0, 0, 0.85)",
-            backdropFilter: "blur(12px)",
-            WebkitBackdropFilter: "blur(12px)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            padding: "16px"
-          }}
-        >
-          <motion.div
-            key="avatar-crop-modal"
-            initial={{ scale: 0.92, opacity: 0, y: 15 }}
-            animate={{ scale: 1, opacity: 1, y: 0 }}
-            exit={{ scale: 0.92, opacity: 0, y: 15 }}
-            transition={{ type: "spring", damping: 25, stiffness: 350 }}
-            style={{
-              width: "min(440px, 94vw)",
-              background: "#14100b",
-              border: "1px solid rgba(245, 158, 11, 0.4)",
-              borderRadius: "14px",
-              boxShadow: "0 25px 60px rgba(0, 0, 0, 0.95), 0 0 35px rgba(245, 158, 11, 0.2)",
-              overflow: "hidden",
-              display: "flex",
-              flexDirection: "column"
-            }}
-          >
-
-          {/* Header */}
-          <div style={{
-            padding: "16px 20px",
-            borderBottom: "1px solid var(--border-subtle)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            background: "#19140f"
-          }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-              <ImageIcon size={18} color="#f59e0b" />
-              <h3 style={{ fontSize: "1.05rem", fontWeight: 800, color: "#ffffff" }}>
-                Edit Avatar
-              </h3>
-            </div>
-            <button
-              onClick={onClose}
-              style={{
-                background: "transparent",
-                border: "none",
-                color: "var(--text-muted)",
-                cursor: "pointer",
-                padding: "4px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center"
-              }}
-            >
-              <X size={18} />
-            </button>
-          </div>
-
-          {/* Interactive Crop Viewport (Discord Style) */}
-          <div
-            ref={containerRef}
-            onMouseDown={handlePointerDown}
-            onTouchStart={handlePointerDown}
-            style={{
-              position: "relative",
-              width: "100%",
-              height: "300px",
-              background: "#0a0806",
-              overflow: "hidden",
-              cursor: isDragging ? "grabbing" : "grab",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              userSelect: "none"
-            }}
-          >
-            {/* Movable Image */}
+    <div
+      style={{
+        position: "fixed",
+        inset: 0,
+        zIndex: 100000,
+        background: "rgba(0, 0, 0, 0.88)",
+        backdropFilter: "blur(10px)",
+        WebkitBackdropFilter: "blur(10px)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "16px"
+      }}
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+    >
+      <div
+        style={{
+          width: "min(460px, 95vw)",
+          background: "#16120d",
+          border: "1px solid rgba(245, 158, 11, 0.5)",
+          borderRadius: "16px",
+          boxShadow: "0 25px 70px rgba(0, 0, 0, 0.98), 0 0 35px rgba(245, 158, 11, 0.25)",
+          overflow: "hidden",
+          display: "flex",
+          flexDirection: "column",
+          zIndex: 100001
+        }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div style={{
+          padding: "16px 20px",
+          borderBottom: "1px solid var(--border-subtle)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          background: "#1c1710"
+        }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
             <div style={{
-              transform: `translate(${pan.x}px, ${pan.y}px) rotate(${rotation}deg) scale(${zoom})`,
-              transformOrigin: "center center",
-              transition: isDragging ? "none" : "transform 0.1s ease-out",
-              pointerEvents: "none",
+              width: "28px",
+              height: "28px",
+              borderRadius: "6px",
+              background: "rgba(245, 158, 11, 0.15)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center"
             }}>
-              <img
-                ref={imageRef}
-                src={imageSrc}
-                alt="Crop preview"
-                style={{
-                  maxWidth: "280px",
-                  maxHeight: "280px",
-                  objectFit: "contain",
-                  userSelect: "none",
-                  pointerEvents: "none"
-                }}
-              />
+              <ImageIcon size={16} color="#f59e0b" />
             </div>
-
-            {/* Dark Mask with Clear Circular Cutout */}
-            <div style={{
-              position: "absolute",
-              inset: 0,
-              pointerEvents: "none",
-              background: "radial-gradient(circle 120px at center, transparent 120px, rgba(9, 7, 5, 0.78) 121px)"
-            }} />
-
-            {/* Glowing Circular Viewport Boundary */}
-            <div style={{
-              position: "absolute",
-              width: "240px",
-              height: "240px",
-              borderRadius: "50%",
-              border: "2px solid #ffffff",
-              boxShadow: "0 0 0 1px rgba(0,0,0,0.5), 0 0 20px rgba(245, 158, 11, 0.4)",
-              pointerEvents: "none"
-            }} />
+            <div>
+              <h3 style={{ fontSize: "1.05rem", fontWeight: 800, color: "#ffffff", margin: 0 }}>
+                Edit Avatar
+              </h3>
+              <p style={{ fontSize: "0.72rem", color: "var(--text-muted)", margin: 0 }}>
+                Drag to reposition • Use slider to zoom
+              </p>
+            </div>
           </div>
+          <button
+            onClick={onClose}
+            style={{
+              background: "transparent",
+              border: "none",
+              color: "var(--text-muted)",
+              cursor: "pointer",
+              padding: "6px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              borderRadius: "6px"
+            }}
+          >
+            <X size={18} />
+          </button>
+        </div>
 
-          {/* Controls Bar: Zoom Slider + Rotate */}
-          <div style={{
-            padding: "16px 20px",
-            background: "#16120d",
-            borderTop: "1px solid var(--border-subtle)",
+        {/* Interactive Discord-Style Crop Viewport */}
+        <div
+          ref={containerRef}
+          onMouseDown={handlePointerDown}
+          onTouchStart={handlePointerDown}
+          style={{
+            position: "relative",
+            width: "100%",
+            height: "290px",
+            background: "#0a0806",
+            overflow: "hidden",
+            cursor: isDragging ? "grabbing" : "grab",
             display: "flex",
             alignItems: "center",
-            justifyContent: "space-between",
-            gap: "16px"
-          }}>
-            {/* Zoom Slider */}
-            <div style={{ display: "flex", alignItems: "center", gap: "10px", flex: 1 }}>
-              <ZoomOut size={16} color="var(--text-muted)" />
-              <input
-                type="range"
-                min="1"
-                max="3"
-                step="0.05"
-                value={zoom}
-                onChange={(e) => setZoom(parseFloat(e.target.value))}
-                style={{
-                  flex: 1,
-                  accentColor: "#f59e0b",
-                  height: "6px",
-                  borderRadius: "3px",
-                  cursor: "pointer"
-                }}
-              />
-              <ZoomIn size={16} color="var(--text-muted)" />
+            justifyContent: "center",
+            userSelect: "none"
+          }}
+        >
+          {/* Spinner while image is loading */}
+          {!imageLoaded && (
+            <div style={{ position: "absolute", zIndex: 5, display: "flex", flexDirection: "column", alignItems: "center", gap: "8px" }}>
+              <Loader2 size={28} color="#f59e0b" className="animate-spin" />
+              <span style={{ fontSize: "0.78rem", color: "var(--text-muted)" }}>Loading Image...</span>
             </div>
+          )}
 
-            {/* Rotate Button */}
-            <button
-              type="button"
-              onClick={handleRotate}
-              title="Rotate 90°"
-              style={{
-                width: "36px",
-                height: "36px",
-                borderRadius: "8px",
-                background: "rgba(255, 255, 255, 0.05)",
-                border: "1px solid var(--border-medium)",
-                color: "#ffffff",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                cursor: "pointer",
-                transition: "background 0.15s ease"
-              }}
-            >
-              <RotateCw size={16} color="#f59e0b" />
-            </button>
-          </div>
-
-          {/* Footer: Reset, Cancel, Apply */}
+          {/* Movable & Zoomable Image */}
           <div style={{
-            padding: "14px 20px",
-            background: "#110e0a",
-            borderTop: "1px solid var(--border-subtle)",
+            transform: `translate(${pan.x}px, ${pan.y}px) rotate(${rotation}deg) scale(${zoom})`,
+            transformOrigin: "center center",
+            transition: isDragging ? "none" : "transform 0.08s ease-out",
             display: "flex",
             alignItems: "center",
-            justifyContent: "space-between"
+            justifyContent: "center"
           }}>
+            <img
+              ref={imageRef}
+              src={imageSrc}
+              alt="Avatar preview"
+              onLoad={() => setImageLoaded(true)}
+              style={{
+                maxWidth: "260px",
+                maxHeight: "260px",
+                objectFit: "contain",
+                userSelect: "none",
+                pointerEvents: "none",
+                display: imageLoaded ? "block" : "none"
+              }}
+            />
+          </div>
+
+          {/* Dark Outer Mask with Circular Clear Viewport */}
+          <div style={{
+            position: "absolute",
+            inset: 0,
+            pointerEvents: "none",
+            background: "radial-gradient(circle 110px at center, transparent 110px, rgba(10, 8, 6, 0.78) 111px)"
+          }} />
+
+          {/* Glowing White/Amber Circular Guide */}
+          <div style={{
+            position: "absolute",
+            width: "220px",
+            height: "220px",
+            borderRadius: "50%",
+            border: "2px solid #ffffff",
+            boxShadow: "0 0 0 1px rgba(0,0,0,0.6), 0 0 25px rgba(245, 158, 11, 0.4)",
+            pointerEvents: "none"
+          }} />
+        </div>
+
+        {/* Controls: Zoom Slider + Rotate */}
+        <div style={{
+          padding: "16px 20px",
+          background: "#19140f",
+          borderTop: "1px solid var(--border-subtle)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: "16px"
+        }}>
+          {/* Zoom Slider */}
+          <div style={{ display: "flex", alignItems: "center", gap: "12px", flex: 1 }}>
+            <ZoomOut size={16} color="var(--text-muted)" />
+            <input
+              type="range"
+              min="1"
+              max="3"
+              step="0.02"
+              value={zoom}
+              onChange={(e) => setZoom(parseFloat(e.target.value))}
+              style={{
+                flex: 1,
+                accentColor: "#f59e0b",
+                height: "6px",
+                borderRadius: "3px",
+                cursor: "pointer"
+              }}
+            />
+            <ZoomIn size={16} color="var(--text-muted)" />
+          </div>
+
+          {/* Rotate 90° Clockwise */}
+          <button
+            type="button"
+            onClick={handleRotate}
+            title="Rotate 90° Clockwise"
+            style={{
+              width: "36px",
+              height: "36px",
+              borderRadius: "8px",
+              background: "rgba(255, 255, 255, 0.05)",
+              border: "1px solid var(--border-medium)",
+              color: "#ffffff",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              cursor: "pointer",
+              transition: "all 0.15s ease"
+            }}
+          >
+            <RotateCw size={16} color="#f59e0b" />
+          </button>
+        </div>
+
+        {/* Footer Actions */}
+        <div style={{
+          padding: "14px 20px",
+          background: "#130f0a",
+          borderTop: "1px solid var(--border-subtle)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between"
+        }}>
+          <button
+            type="button"
+            onClick={handleReset}
+            style={{
+              background: "transparent",
+              border: "none",
+              color: "var(--text-secondary)",
+              fontSize: "0.85rem",
+              fontWeight: 600,
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              gap: "6px"
+            }}
+          >
+            <RefreshCw size={14} />
+            <span>Reset</span>
+          </button>
+
+          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
             <button
               type="button"
-              onClick={handleReset}
-              style={{
-                background: "transparent",
-                border: "none",
-                color: "var(--text-secondary)",
-                fontSize: "0.85rem",
-                fontWeight: 600,
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                gap: "6px"
-              }}
+              onClick={onClose}
+              className="btn-secondary"
+              style={{ padding: "8px 16px", fontSize: "0.85rem" }}
             >
-              <RefreshCw size={14} />
-              <span>Reset</span>
+              Cancel
             </button>
 
-            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-              <button
-                type="button"
-                onClick={onClose}
-                className="btn-secondary"
-                style={{ padding: "8px 16px", fontSize: "0.85rem" }}
-              >
-                Cancel
-              </button>
-
-              <button
-                type="button"
-                disabled={saving}
-                onClick={handleCropAndSave}
-                className="btn-primary"
-                style={{ padding: "8px 20px", fontSize: "0.85rem" }}
-              >
-                {saving ? (
-                  <>
-                    <Loader2 size={15} className="animate-spin" />
-                    <span>Saving...</span>
-                  </>
-                ) : (
-                  <>
-                    <Check size={15} />
-                    <span>Apply</span>
-                  </>
-                )}
-              </button>
-            </div>
+            <button
+              type="button"
+              disabled={saving}
+              onClick={handleCropAndSave}
+              className="btn-primary"
+              style={{ padding: "8px 22px", fontSize: "0.85rem" }}
+            >
+              {saving ? (
+                <>
+                  <Loader2 size={15} className="animate-spin" />
+                  <span>Saving...</span>
+                </>
+              ) : (
+                <>
+                  <Check size={15} />
+                  <span>Apply</span>
+                </>
+              )}
+            </button>
           </div>
-        </motion.div>
-      </motion.div>
-      )}
-    </AnimatePresence>
+        </div>
+      </div>
+    </div>
   );
 };
-
