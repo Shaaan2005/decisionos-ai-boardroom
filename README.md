@@ -69,30 +69,55 @@ When people face high-stakes dilemmas (career shifts, fundraising, tech rewrites
 
 When you submit a strategic dilemma, DecisionOS orchestrates a multi-stage cognitive workflow:
 
+```mermaid
+flowchart TD
+    %% Custom Styling
+    classDef input fill:#1c1917,stroke:#f59e0b,stroke-width:2px,color:#ffffff,rx:10px,ry:10px;
+    classDef analyzer fill:#292524,stroke:#f59e0b,stroke-width:2px,color:#fef08a,rx:8px,ry:8px;
+    classDef agent fill:#181511,stroke:#eab308,stroke-width:1.5px,color:#ffffff,rx:8px,ry:8px;
+    classDef debate fill:#3b0712,stroke:#f43f5e,stroke-width:2px,color:#fda4af,rx:8px,ry:8px;
+    classDef memory fill:#2e1065,stroke:#a855f7,stroke-width:2px,color:#e9d5ff,rx:8px,ry:8px;
+    classDef chairman fill:#172554,stroke:#3b82f6,stroke-width:2px,color:#93c5fd,rx:8px,ry:8px;
+    classDef output fill:#064e3b,stroke:#10b981,stroke-width:2px,color:#a7f3d0,rx:10px,ry:10px;
+
+    %% Nodes
+    USER["👤 User Dilemma & Strategic Inputs"]:::input
+    ANALYZER["🔍 Decision Analyzer Agent<br/><i>(Deconstructs Dilemma & Queries Vectors)</i>"]:::analyzer
+    VAULT[("🧠 ChromaDB Vector Vault<br/><i>(Recalls Past Precedents & Values)</i>")]:::memory
+
+    %% 5 Board Personas
+    subgraph BOARD["🏛️ Autonomous Boardroom Deliberation"]
+        CEO["👑 CEO Agent<br/><b>Vision & Asymmetric Upside</b>"]:::agent
+        CFO["💰 CFO Agent<br/><b>Runway & Risk-Adjusted ROI</b>"]:::agent
+        CTO["⚡ CTO Agent<br/><b>Tech Velocity & Architecture</b>"]:::agent
+        RISK["🛡️ Risk Analyst<br/><b>Pre-Mortem & Tripwires</b>"]:::agent
+        MENTOR["🌱 Mentor Agent<br/><b>Core Values & Longevity</b>"]:::agent
+    end
+
+    DEBATE["⚔️ Multi-Agent Dialectical Debate<br/><i>(Autonomous Cross-Examination & Tension Resolution)</i>"]:::debate
+    CHAIRMAN["⚖️ Chairman of the Board<br/><b>Consensus Synthesis & Arbitration</b>"]:::chairman
+    DELIVERABLE["📊 Comprehensive Executive Deliverable<br/><b>Verdict • Confidence Gauge • Action Roadmap</b>"]:::output
+
+    %% Flow Relationships
+    USER --> ANALYZER
+    VAULT -.->|Historical Precedents| ANALYZER
+    ANALYZER --> CEO
+    ANALYZER --> CFO
+    ANALYZER --> CTO
+    ANALYZER --> RISK
+    ANALYZER --> MENTOR
+
+    CEO --> DEBATE
+    CFO --> DEBATE
+    CTO --> DEBATE
+    RISK --> DEBATE
+    MENTOR --> DEBATE
+
+    DEBATE --> CHAIRMAN
+    CHAIRMAN --> DELIVERABLE
+    DELIVERABLE -.->|Log Retrospective Outcome| VAULT
 ```
-                                 [ User Strategic Dilemma ]
-                                             │
-                                             ▼
-                             [ 🔍 Decision Analyzer Agent ]
-                                             │
-               ┌──────────────┬──────────────┼──────────────┬──────────────┐
-               ▼              ▼              ▼              ▼              ▼
-          [ CEO Agent ]  [ CFO Agent ]  [ CTO Agent ]  [ Risk Agent ] [ Mentor Agent ]
-          (Vision/Upside)  (Runway/ROI)   (Tech Velocity) (Pre-Mortem)   (Core Values)
-               │              │              │              │              │
-               └──────────────┴──────────────┼──────────────┴──────────────┘
-                                             │
-                                             ▼
-                          [ ⚔️ Cross-Agent Round-Table Debate ]
-                                 (Dialectical Rebuttals)
-                                             │
-                                             ▼
-                              [ ⚖️ Chairman of the Board ]
-                                (Synthesis & Final Verdict)
-                                             │
-                                             ▼
-                           [ 📊 Executive Deliverable & Plan ]
-```
+
 
 ---
 
