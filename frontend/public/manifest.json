@@ -1,0 +1,25 @@
+{
+  "name": "DecisionOS - AI Personal Board of Directors",
+  "short_name": "DecisionOS",
+  "description": "Executive Personal AI Board of Directors (CEO, CFO, CTO, Risk Analyst, Mentor, Chairman).",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0b0907",
+  "theme_color": "#0b0907",
+  "categories": ["business", "productivity", "utilities"],
+  "icons": [
+    {
+      "src": "/decisionos-logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/decisionos-logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
