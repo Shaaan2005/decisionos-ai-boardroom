@@ -27,18 +27,19 @@
   },
   "scope_extensions": [
     {
-      "origin": "https://decisionos-ai-boardroom.vercel.app"
+      "origin": "https://auth.decisionos.com"
     },
     {
-      "origin": "https://*.vercel.app"
+      "origin": "https://accounts.google.com"
+    },
+    {
+      "origin": "https://api.decisionos.com"
     },
     {
       "origin": "https://decisionos-ai-boardroom.onrender.com"
-    },
-    {
-      "origin": "https://*.onrender.com"
     }
   ],
+
 
   "orientation": "portrait-primary",
   "background_color": "#0b0907",
