@@ -9,6 +9,8 @@ class UserProfileBase(BaseModel):
     default_risk_tolerance: str = "moderate"
     core_values: List[str] = []
     personal_context: Optional[str] = None
+    avatar_url: Optional[str] = None
+
 
 class UserProfileUpdate(UserProfileBase):
     pass

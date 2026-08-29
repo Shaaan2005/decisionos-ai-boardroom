@@ -175,14 +175,46 @@ async def update_profile(
     profile = result.scalars().first()
     if not profile:
         profile = UserProfile(user_id=current_user.id)
-        db.add(profile)
-
     for field, value in payload.model_dump(exclude_unset=True).items():
         setattr(profile, field, value)
 
     await db.commit()
     await db.refresh(profile)
     return profile
+
+
+@router.post("/avatar", response_model=UserProfileResponse)
+async def upload_avatar_image(
+    file: UploadFile = File(...),
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db)
+):
+    """Upload and optimize user avatar image as base64 data URI."""
+    import base64
+    content_bytes = await file.read(5 * 1024 * 1024 + 1)
+    if len(content_bytes) > 5 * 1024 * 1024:
+        raise HTTPException(
+            status_code=status.HTTP_413_CONTENT_TOO_LARGE,
+            detail="Avatar image must be under 5MB."
+        )
+    
+    mime_type = file.content_type or "image/png"
+    base64_str = base64.b64encode(content_bytes).decode("utf-8")
+    data_uri = f"data:{mime_type};base64,{base64_str}"
+
+    result = await db.execute(
+        select(UserProfile).filter(UserProfile.user_id == current_user.id)
+    )
+    profile = result.scalars().first()
+    if not profile:
+        profile = UserProfile(user_id=current_user.id)
+        db.add(profile)
+    
+    profile.avatar_url = data_uri
+    await db.commit()
+    await db.refresh(profile)
+    return profile
+
 
 @router.post("/parse-resume", response_model=ResumeParseResponse)
 async def parse_resume_text(

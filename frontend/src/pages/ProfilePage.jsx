@@ -10,15 +10,18 @@ import {
   Save, 
   Sparkles, 
   Plus, 
-  X,
-  CheckCircle,
-  Loader2,
-  FileText,
-  Upload,
-  ClipboardList,
-  Zap,
-  Check,
-  Award
+  X, 
+  CheckCircle, 
+  Loader2, 
+  FileText, 
+  Upload, 
+  ClipboardList, 
+  Zap, 
+  Check, 
+  Award,
+  Camera,
+  Trash2,
+  Image as ImageIcon
 } from "lucide-react";
 import { 
   playSubmitSound, 
@@ -43,6 +46,10 @@ export const ProfilePage = () => {
   const [newValInput, setNewValInput] = useState("");
   const [personalContext, setPersonalContext] = useState("");
   
+  // Avatar state
+  const [avatarUploading, setAvatarUploading] = useState(false);
+  const avatarInputRef = useRef(null);
+
   // Resume extraction state
   const [resumeMode, setResumeMode] = useState("upload"); // "upload" | "paste"
   const [resumeText, setResumeText] = useState("");
@@ -55,6 +62,53 @@ export const ProfilePage = () => {
   const [loading, setLoading] = useState(false);
   const [savedSuccess, setSavedSuccess] = useState(false);
   const [error, setError] = useState("");
+
+  const handleAvatarUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      playErrorSound();
+      setError(t("profile.avatar_size_error", "Avatar image must be smaller than 5 MB."));
+      return;
+    }
+
+    setAvatarUploading(true);
+    setError("");
+    try {
+      playClickSound();
+      await api.uploadAvatar(file);
+      await refreshProfile();
+      playSubmitSound();
+      setSavedSuccess(true);
+      setTimeout(() => setSavedSuccess(false), 3000);
+    } catch (err) {
+      playErrorSound();
+      setError(err.message || "Failed to upload avatar");
+    } finally {
+      setAvatarUploading(false);
+    }
+  };
+
+  const handleRemoveAvatar = async () => {
+    if (window.confirm("Are you sure you want to remove your profile avatar?")) {
+      setAvatarUploading(true);
+      setError("");
+      try {
+        playRemoveSound();
+        await api.updateProfile({ avatar_url: null });
+        await refreshProfile();
+        setSavedSuccess(true);
+        setTimeout(() => setSavedSuccess(false), 3000);
+      } catch (err) {
+        playErrorSound();
+        setError(err.message || "Failed to remove avatar");
+      } finally {
+        setAvatarUploading(false);
+      }
+    }
+  };
+
 
   useEffect(() => {
     if (user?.profile) {
@@ -237,10 +291,153 @@ export const ProfilePage = () => {
         </div>
       )}
 
+      {/* Hidden File Input for Avatar Upload */}
+      <input
+        type="file"
+        ref={avatarInputRef}
+        onChange={handleAvatarUpload}
+        accept="image/*"
+        style={{ display: "none" }}
+      />
+
+      {/* ─────────────────────────────────────────────
+          SECTION 0: EXECUTIVE AVATAR & IDENTITY CARD
+      ───────────────────────────────────────────── */}
+      <div className="rzp-card" style={{ padding: "24px", marginBottom: "28px", border: "1px solid rgba(245, 158, 11, 0.35)", background: "linear-gradient(135deg, #16120d 0%, #0d0b08 100%)" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "20px" }}>
+          {/* Avatar Preview + User Info */}
+          <div style={{ display: "flex", alignItems: "center", gap: "18px" }}>
+            {/* Avatar Circle Container */}
+            <div style={{ position: "relative" }}>
+              <div 
+                onClick={() => avatarInputRef.current?.click()}
+                title="Click to upload custom profile photo"
+                style={{
+                  width: "84px",
+                  height: "84px",
+                  borderRadius: "50%",
+                  background: user?.profile?.avatar_url ? "#1a1611" : "linear-gradient(135deg, #f59e0b 0%, #ea580c 100%)",
+                  border: "2px solid #f59e0b",
+                  boxShadow: "0 0 20px rgba(245, 158, 11, 0.35)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  overflow: "hidden",
+                  cursor: "pointer",
+                  position: "relative"
+                }}
+              >
+                {user?.profile?.avatar_url ? (
+                  <img
+                    src={user.profile.avatar_url}
+                    alt={user.full_name}
+                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                  />
+                ) : (
+                  <span style={{ fontSize: "2rem", fontWeight: 900, color: "#0b0907" }}>
+                    {user?.full_name?.charAt(0).toUpperCase() || "U"}
+                  </span>
+                )}
+
+                {/* Upload Hover Overlay */}
+                {avatarUploading && (
+                  <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.7)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <Loader2 size={24} color="#f59e0b" className="animate-spin" />
+                  </div>
+                )}
+              </div>
+
+              {/* Floating Camera Badge */}
+              <button
+                type="button"
+                onClick={() => avatarInputRef.current?.click()}
+                title="Upload Photo"
+                style={{
+                  position: "absolute",
+                  bottom: "-2px",
+                  right: "-2px",
+                  width: "28px",
+                  height: "28px",
+                  borderRadius: "50%",
+                  background: "#f59e0b",
+                  border: "2px solid #16120d",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  cursor: "pointer",
+                  color: "#0b0907",
+                  boxShadow: "0 2px 8px rgba(0,0,0,0.5)"
+                }}
+              >
+                <Camera size={14} strokeWidth={2.5} />
+              </button>
+            </div>
+
+            {/* Name, Role & Status */}
+            <div>
+              <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
+                <h2 style={{ fontSize: "1.35rem", fontWeight: 900, color: "#ffffff" }}>
+                  {user?.full_name || "Executive Leader"}
+                </h2>
+                <span className="cyber-badge">
+                  {user?.profile?.current_role || "Executive Member"}
+                </span>
+              </div>
+              <p style={{ fontSize: "0.84rem", color: "var(--text-muted)", marginTop: "3px" }}>
+                {user?.email}
+              </p>
+              <p style={{ fontSize: "0.74rem", color: "#f59e0b", marginTop: "2px" }}>
+                {user?.profile?.avatar_url ? "✓ Custom Profile Avatar Active" : "Default Initial Avatar"}
+              </p>
+            </div>
+          </div>
+
+          {/* Action Buttons: Upload & Remove */}
+          <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
+            <button
+              type="button"
+              disabled={avatarUploading}
+              onClick={() => {
+                playClickSound();
+                avatarInputRef.current?.click();
+              }}
+              className="btn-primary"
+              style={{ padding: "8px 16px", fontSize: "0.85rem" }}
+            >
+              {avatarUploading ? (
+                <>
+                  <Loader2 size={15} className="animate-spin" />
+                  <span>Uploading...</span>
+                </>
+              ) : (
+                <>
+                  <Upload size={15} />
+                  <span>{user?.profile?.avatar_url ? "Change Photo" : "Upload Photo"}</span>
+                </>
+              )}
+            </button>
+
+            {user?.profile?.avatar_url && (
+              <button
+                type="button"
+                disabled={avatarUploading}
+                onClick={handleRemoveAvatar}
+                className="btn-secondary"
+                style={{ padding: "8px 14px", fontSize: "0.85rem", color: "#f87171", borderColor: "rgba(248, 113, 113, 0.3)" }}
+              >
+                <Trash2 size={15} />
+                <span>Remove</span>
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+
       {/* ─────────────────────────────────────────────
           SECTION 1: AI RESUME & BIO AUTO-EXTRACTION CARD
       ───────────────────────────────────────────── */}
       <div className="rzp-card" style={{ padding: "28px", marginBottom: "28px", border: "1px solid var(--border-amber)" }}>
+
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "16px", flexWrap: "wrap", gap: "12px" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
             <div style={{

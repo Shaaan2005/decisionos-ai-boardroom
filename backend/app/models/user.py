@@ -30,8 +30,10 @@ class UserProfile(Base):
     default_risk_tolerance = Column(String(50), default="moderate")  # conservative, moderate, aggressive, highly_aggressive
     core_values = Column(JSON, default=list)  # e.g. ["Work-Life Balance", "Rapid Skill Acquisition", "High Upside Equity"]
     personal_context = Column(Text, nullable=True)
+    avatar_url = Column(Text, nullable=True)
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     updated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
+
 
     # Relationship
     user = relationship("User", back_populates="profile")

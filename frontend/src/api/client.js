@@ -95,6 +95,30 @@ class ApiClient {
     return this.request("/users/profile", { method: "PUT", body: data });
   }
 
+  async uploadAvatar(file) {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const url = `${API_BASE}/users/avatar`;
+    const headers = {
+      ...(this.token ? { Authorization: `Bearer ${this.token}` } : {}),
+    };
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers,
+      body: formData,
+      credentials: "include",
+    });
+
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      throw new Error(data.detail || "Failed to upload avatar image");
+    }
+    return data;
+  }
+
+
   async parseResumeText(text, apiKey = null) {
     return this.request("/users/parse-resume", {
       method: "POST",

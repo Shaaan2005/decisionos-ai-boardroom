@@ -324,7 +324,7 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenPalette }) => {
           </div>
 
           {user && (
-            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0 }}>
               <div 
                 onClick={() => handleTabChange("profile")}
                 title="View Profile & Values"
@@ -332,17 +332,28 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenPalette }) => {
                   width: "32px",
                   height: "32px",
                   borderRadius: "6px",
-                  background: "#f59e0b",
+                  background: user.profile?.avatar_url ? "#15120d" : "#f59e0b",
+                  border: user.profile?.avatar_url ? "1px solid #f59e0b" : "none",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                   fontWeight: 900,
                   fontSize: "0.82rem",
                   color: "#0b0907",
-                  cursor: "pointer"
+                  cursor: "pointer",
+                  overflow: "hidden",
+                  flexShrink: 0
                 }}
               >
-                {user.full_name?.charAt(0).toUpperCase() || "U"}
+                {user.profile?.avatar_url ? (
+                  <img
+                    src={user.profile.avatar_url}
+                    alt={user.full_name}
+                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                  />
+                ) : (
+                  user.full_name?.charAt(0).toUpperCase() || "U"
+                )}
               </div>
               <div className="desktop-only" style={{ display: "flex", flexDirection: "column" }}>
                 <span style={{ fontSize: "0.82rem", fontWeight: 700, color: "var(--text-primary)" }}>
@@ -354,6 +365,7 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenPalette }) => {
               </div>
             </div>
           )}
+
 
           <button
             onClick={() => {
