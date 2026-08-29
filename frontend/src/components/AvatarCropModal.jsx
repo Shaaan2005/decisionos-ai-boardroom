@@ -1,6 +1,8 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
+import { createPortal } from "react-dom";
 import { X, ZoomIn, ZoomOut, RotateCw, RefreshCw, Check, Loader2, Image as ImageIcon } from "lucide-react";
 import { playClickSound, playSubmitSound, playPopSound } from "../utils/audioUtils";
+
 
 export const AvatarCropModal = ({ isOpen, imageSrc, onClose, onApply }) => {
   const [zoom, setZoom] = useState(1);
@@ -131,14 +133,14 @@ export const AvatarCropModal = ({ isOpen, imageSrc, onClose, onApply }) => {
     }
   };
 
-  if (!isOpen || !imageSrc) return null;
+  if (!isOpen || !imageSrc || typeof document === "undefined") return null;
 
-  return (
+  return createPortal(
     <div
       style={{
         position: "fixed",
         inset: 0,
-        zIndex: 100000,
+        zIndex: 999999,
         background: "rgba(0, 0, 0, 0.88)",
         backdropFilter: "blur(10px)",
         WebkitBackdropFilter: "blur(10px)",
@@ -147,6 +149,7 @@ export const AvatarCropModal = ({ isOpen, imageSrc, onClose, onApply }) => {
         justifyContent: "center",
         padding: "16px"
       }}
+
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
@@ -401,6 +404,8 @@ export const AvatarCropModal = ({ isOpen, imageSrc, onClose, onApply }) => {
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
+
