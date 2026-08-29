@@ -27,15 +27,19 @@
   },
   "scope_extensions": [
     {
-      "origin": "decisionos-ai-boardroom.vercel.app"
+      "origin": "https://decisionos-ai-boardroom.vercel.app"
     },
     {
-      "origin": "*.vercel.app"
+      "origin": "https://*.vercel.app"
     },
     {
-      "origin": "decisionos-ai-boardroom.onrender.com"
+      "origin": "https://decisionos-ai-boardroom.onrender.com"
+    },
+    {
+      "origin": "https://*.onrender.com"
     }
   ],
+
   "orientation": "portrait-primary",
   "background_color": "#0b0907",
   "theme_color": "#0b0907",
