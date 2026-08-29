@@ -1,15 +1,19 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import { createPortal } from "react-dom";
-import { X, ZoomIn, ZoomOut, RotateCw, RefreshCw, Check, Loader2, Image as ImageIcon, Move } from "lucide-react";
+import { X, ZoomIn, ZoomOut, RotateCw, RefreshCw, Check, Loader2, Image as ImageIcon, Maximize2, Move } from "lucide-react";
 import { playClickSound, playSubmitSound, playPopSound } from "../utils/audioUtils";
 
 export const AvatarCropModal = ({ isOpen, imageSrc, onClose, onApply }) => {
-  const [zoom, setZoom] = useState(1);
+  // Scale slider (0.3 to 1.0 represents fraction of max possible image diameter)
+  const [circleFraction, setCircleFraction] = useState(0.85); // 0.3 (small close-up) to 1.0 (full image capture)
   const [rotation, setRotation] = useState(0); // 0, 90, 180, 270
   const [saving, setSaving] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
 
-  // Performance-optimized Ref-based coordinates for 120 FPS zero-lag dragging
+  // Image layout dimensions in viewport
+  const [imgLayout, setImgLayout] = useState({ width: 280, height: 280 });
+
+  // Pan coordinates in pixels relative to image center
   const panRef = useRef({ x: 0, y: 0 });
   const isDraggingRef = useRef(false);
   const dragStartRef = useRef({ x: 0, y: 0 });
@@ -20,29 +24,76 @@ export const AvatarCropModal = ({ isOpen, imageSrc, onClose, onApply }) => {
   const maskRef = useRef(null);
   const imageRef = useRef(null);
 
-  // Reset when a new image is loaded
-  useEffect(() => {
-    if (isOpen && imageSrc) {
-      setZoom(1);
-      setRotation(0);
-      panRef.current = { x: 0, y: 0 };
-      setImageLoaded(false);
-      updateLensDom(0, 0);
-    }
-  }, [isOpen, imageSrc]);
+  // Compute current circle diameter in pixels
+  const maxPossibleDiameter = Math.min(imgLayout.width, imgLayout.height);
+  const minDiameter = Math.min(80, maxPossibleDiameter * 0.35);
+  const circleDiameter = Math.round(minDiameter + circleFraction * (maxPossibleDiameter - minDiameter));
+  const circleRadius = Math.round(circleDiameter / 2);
 
-  // Direct DOM update for zero lag
-  const updateLensDom = (x, y) => {
+  // Clamp pan so circle never goes outside image
+  const clampPan = (x, y, radius = circleRadius) => {
+    const maxPanX = Math.max(0, imgLayout.width / 2 - radius);
+    const maxPanY = Math.max(0, imgLayout.height / 2 - radius);
+    return {
+      x: Math.max(-maxPanX, Math.min(maxPanX, x)),
+      y: Math.max(-maxPanY, Math.min(maxPanY, y))
+    };
+  };
+
+  // Update lens and mask DOM in real-time (0 React re-renders during dragging)
+  const updateLensDom = (x, y, diameter = circleDiameter) => {
+    const radius = diameter / 2;
     if (lensRef.current) {
+      lensRef.current.style.width = `${diameter}px`;
+      lensRef.current.style.height = `${diameter}px`;
       lensRef.current.style.transform = `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`;
     }
     if (maskRef.current) {
-      // Update the transparent radial mask center
-      maskRef.current.style.background = `radial-gradient(circle 90px at calc(50% + ${x}px) calc(50% + ${y}px), transparent 89px, rgba(10, 8, 6, 0.78) 90px)`;
+      maskRef.current.style.background = `radial-gradient(circle ${radius}px at calc(50% + ${x}px) calc(50% + ${y}px), transparent ${radius - 1}px, rgba(8, 6, 4, 0.78) ${radius}px)`;
     }
   };
 
-  // Drag start handler (Pointer / Mouse / Touch)
+  // On image load, calculate proper fitted layout
+  const handleImageLoad = () => {
+    setImageLoaded(true);
+    if (!imageRef.current) return;
+    const nw = imageRef.current.naturalWidth || 300;
+    const nh = imageRef.current.naturalHeight || 300;
+
+    const maxBox = 300; // max width & height inside 340px container
+    let w = maxBox;
+    let h = maxBox;
+    if (nw > nh) {
+      h = Math.round((nh / nw) * maxBox);
+    } else {
+      w = Math.round((nw / nh) * maxBox);
+    }
+
+    setImgLayout({ width: w, height: h });
+    panRef.current = { x: 0, y: 0 };
+    const maxDiam = Math.min(w, h);
+    const initDiam = Math.round(minDiameter + circleFraction * (maxDiam - minDiameter));
+    updateLensDom(0, 0, initDiam);
+  };
+
+  // Reset when a new image is loaded or opened
+  useEffect(() => {
+    if (isOpen && imageSrc) {
+      setCircleFraction(0.85);
+      setRotation(0);
+      panRef.current = { x: 0, y: 0 };
+      setImageLoaded(false);
+    }
+  }, [isOpen, imageSrc]);
+
+  // Update lens DOM when circle size changes
+  useEffect(() => {
+    const clamped = clampPan(panRef.current.x, panRef.current.y, circleRadius);
+    panRef.current = clamped;
+    updateLensDom(clamped.x, clamped.y, circleDiameter);
+  }, [circleFraction, imgLayout]);
+
+  // Pointer drag listeners for 120 FPS dragging
   const handlePointerDown = (e) => {
     e.preventDefault();
     isDraggingRef.current = true;
@@ -60,16 +111,14 @@ export const AvatarCropModal = ({ isOpen, imageSrc, onClose, onApply }) => {
     const clientY = e.clientY ?? e.touches?.[0]?.clientY;
     if (clientX === undefined || clientY === undefined) return;
 
-    let newX = clientX - dragStartRef.current.x;
-    let newY = clientY - dragStartRef.current.y;
+    const rawX = clientX - dragStartRef.current.x;
+    const rawY = clientY - dragStartRef.current.y;
 
-    // Bounds limit lens inside viewport (max ±120px horizontally and ±90px vertically)
-    newX = Math.max(-130, Math.min(130, newX));
-    newY = Math.max(-95, Math.min(95, newY));
-
-    panRef.current = { x: newX, y: newY };
-    updateLensDom(newX, newY);
-  }, []);
+    // Strict clamping within the visible image boundary
+    const clamped = clampPan(rawX, rawY, circleRadius);
+    panRef.current = clamped;
+    updateLensDom(clamped.x, clamped.y, circleDiameter);
+  }, [circleRadius, imgLayout]);
 
   const handlePointerUp = useCallback(() => {
     isDraggingRef.current = false;
@@ -98,16 +147,16 @@ export const AvatarCropModal = ({ isOpen, imageSrc, onClose, onApply }) => {
     setRotation((prev) => (prev + 90) % 360);
   };
 
-  // Reset to center
+  // Reset to default
   const handleReset = () => {
     playPopSound();
-    setZoom(1);
+    setCircleFraction(0.85);
     setRotation(0);
     panRef.current = { x: 0, y: 0 };
-    updateLensDom(0, 0);
+    updateLensDom(0, 0, Math.round(minDiameter + 0.85 * (maxPossibleDiameter - minDiameter)));
   };
 
-  // Crop & Export to 256x256 circular JPEG
+  // Crop & Export exact circular area to 256x256 JPEG
   const handleCropAndSave = async () => {
     if (!imageRef.current) return;
     setSaving(true);
@@ -120,8 +169,8 @@ export const AvatarCropModal = ({ isOpen, imageSrc, onClose, onApply }) => {
       const ctx = canvas.getContext("2d");
 
       const img = imageRef.current;
-      const naturalWidth = img.naturalWidth || img.width || 300;
-      const naturalHeight = img.naturalHeight || img.height || 300;
+      const naturalWidth = img.naturalWidth || 300;
+      const naturalHeight = img.naturalHeight || 300;
 
       // Circle Clip Mask
       ctx.beginPath();
@@ -134,25 +183,21 @@ export const AvatarCropModal = ({ isOpen, imageSrc, onClose, onApply }) => {
       ctx.translate(outputSize / 2, outputSize / 2);
       ctx.rotate((rotation * Math.PI) / 180);
 
-      // Lens diameter in UI is 180px
-      const lensUiDiameter = 180;
-      const baseScale = Math.max(lensUiDiameter / naturalWidth, lensUiDiameter / naturalHeight);
-      const totalScale = (outputSize / lensUiDiameter) * baseScale * zoom;
+      // Ratio from displayed image to output
+      const scaleToOutput = outputSize / circleDiameter;
+      const panRatioX = (panRef.current.x / imgLayout.width) * naturalWidth;
+      const panRatioY = (panRef.current.y / imgLayout.height) * naturalHeight;
 
-      // Invert pan so moving lens right shifts crop region correctly
-      const panRatio = outputSize / lensUiDiameter;
-      ctx.translate(-panRef.current.x * panRatio, -panRef.current.y * panRatio);
+      const drawWidth = (imgLayout.width / circleDiameter) * outputSize;
+      const drawHeight = (imgLayout.height / circleDiameter) * outputSize;
 
-      ctx.drawImage(
-        img,
-        (-naturalWidth / 2) * totalScale,
-        (-naturalHeight / 2) * totalScale,
-        naturalWidth * totalScale,
-        naturalHeight * totalScale
-      );
+      const drawX = -drawWidth / 2 - (panRef.current.x / circleDiameter) * outputSize;
+      const drawY = -drawHeight / 2 - (panRef.current.y / circleDiameter) * outputSize;
+
+      ctx.drawImage(img, drawX, drawY, drawWidth, drawHeight);
       ctx.restore();
 
-      const dataUrl = canvas.toDataURL("image/jpeg", 0.90);
+      const dataUrl = canvas.toDataURL("image/jpeg", 0.92);
       playSubmitSound();
       await onApply(dataUrl);
       onClose();
@@ -185,7 +230,7 @@ export const AvatarCropModal = ({ isOpen, imageSrc, onClose, onApply }) => {
     >
       <div
         style={{
-          width: "min(480px, 95vw)",
+          width: "min(490px, 95vw)",
           background: "#16120d",
           border: "1px solid rgba(245, 158, 11, 0.5)",
           borderRadius: "16px",
@@ -222,10 +267,10 @@ export const AvatarCropModal = ({ isOpen, imageSrc, onClose, onApply }) => {
             </div>
             <div>
               <h3 style={{ fontSize: "1.05rem", fontWeight: 800, color: "#ffffff", margin: 0 }}>
-                Moveable Crop Circle
+                Adjust Avatar Crop
               </h3>
               <p style={{ fontSize: "0.72rem", color: "#f59e0b", margin: 0, display: "flex", alignItems: "center", gap: "4px" }}>
-                <Move size={12} /> Drag the circle anywhere over the image
+                <Move size={12} /> Drag circle over image • Slide to expand size
               </p>
             </div>
           </div>
@@ -255,7 +300,7 @@ export const AvatarCropModal = ({ isOpen, imageSrc, onClose, onApply }) => {
           style={{
             position: "relative",
             width: "100%",
-            height: "310px",
+            height: "330px",
             background: "#080604",
             overflow: "hidden",
             cursor: "crosshair",
@@ -274,11 +319,11 @@ export const AvatarCropModal = ({ isOpen, imageSrc, onClose, onApply }) => {
             </div>
           )}
 
-          {/* Scaled & Rotated Base Image */}
+          {/* Scaled & Rotated Base Image Frame */}
           <div style={{
-            transform: `rotate(${rotation}deg) scale(${zoom})`,
-            transformOrigin: "center center",
-            transition: "transform 0.12s ease-out",
+            position: "relative",
+            width: `${imgLayout.width}px`,
+            height: `${imgLayout.height}px`,
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -288,16 +333,17 @@ export const AvatarCropModal = ({ isOpen, imageSrc, onClose, onApply }) => {
               ref={imageRef}
               src={imageSrc}
               alt="Avatar preview"
-              onLoad={() => setImageLoaded(true)}
-              onError={() => setImageLoaded(true)}
+              onLoad={handleImageLoad}
+              onError={handleImageLoad}
               style={{
-                maxWidth: "280px",
-                maxHeight: "280px",
+                width: "100%",
+                height: "100%",
                 objectFit: "contain",
+                transform: `rotate(${rotation}deg)`,
+                transition: "transform 0.15s ease",
                 userSelect: "none",
                 pointerEvents: "none",
-                opacity: imageLoaded ? 1 : 0.01,
-                transition: "opacity 0.15s ease"
+                opacity: imageLoaded ? 1 : 0.01
               }}
             />
           </div>
@@ -309,20 +355,20 @@ export const AvatarCropModal = ({ isOpen, imageSrc, onClose, onApply }) => {
               position: "absolute",
               inset: 0,
               pointerEvents: "none",
-              background: "radial-gradient(circle 90px at center, transparent 89px, rgba(8, 6, 4, 0.78) 90px)",
+              background: `radial-gradient(circle ${circleRadius}px at center, transparent ${circleRadius - 1}px, rgba(8, 6, 4, 0.78) ${circleRadius}px)`,
               transition: "background 0.01s linear"
             }}
           />
 
-          {/* Moveable Glowing Circular Crop Lens */}
+          {/* Moveable Glowing Circular Crop Lens bounded within image */}
           <div
             ref={lensRef}
             style={{
               position: "absolute",
               top: "50%",
               left: "50%",
-              width: "180px",
-              height: "180px",
+              width: `${circleDiameter}px`,
+              height: `${circleDiameter}px`,
               transform: "translate(-50%, -50%)",
               borderRadius: "50%",
               border: "2px solid #f59e0b",
@@ -335,7 +381,7 @@ export const AvatarCropModal = ({ isOpen, imageSrc, onClose, onApply }) => {
               transition: "none"
             }}
           >
-            {/* Center Reticle / Crosshair Indicator */}
+            {/* Center Reticle */}
             <div style={{
               width: "12px",
               height: "12px",
@@ -347,7 +393,7 @@ export const AvatarCropModal = ({ isOpen, imageSrc, onClose, onApply }) => {
           </div>
         </div>
 
-        {/* Controls: Zoom Slider + Rotate */}
+        {/* Controls: Circle Size / Expansion Slider + Rotate */}
         <div style={{
           padding: "16px 20px",
           background: "#19140f",
@@ -357,16 +403,19 @@ export const AvatarCropModal = ({ isOpen, imageSrc, onClose, onApply }) => {
           justifyContent: "space-between",
           gap: "16px"
         }}>
-          {/* Zoom Slider */}
-          <div style={{ display: "flex", alignItems: "center", gap: "12px", flex: 1 }}>
-            <ZoomOut size={16} color="var(--text-muted)" />
+          {/* Circle Size Slider */}
+          <div style={{ display: "flex", alignItems: "center", gap: "10px", flex: 1 }}>
+            <span style={{ fontSize: "0.75rem", fontFamily: "var(--font-mono)", color: "var(--text-muted)", display: "flex", alignItems: "center", gap: "4px" }}>
+              <Maximize2 size={13} color="#f59e0b" />
+              <span>Circle Size:</span>
+            </span>
             <input
               type="range"
-              min="0.8"
-              max="3"
-              step="0.02"
-              value={zoom}
-              onChange={(e) => setZoom(parseFloat(e.target.value))}
+              min="0.1"
+              max="1.0"
+              step="0.01"
+              value={circleFraction}
+              onChange={(e) => setCircleFraction(parseFloat(e.target.value))}
               style={{
                 flex: 1,
                 accentColor: "#f59e0b",
@@ -375,7 +424,9 @@ export const AvatarCropModal = ({ isOpen, imageSrc, onClose, onApply }) => {
                 cursor: "pointer"
               }}
             />
-            <ZoomIn size={16} color="var(--text-muted)" />
+            <span style={{ fontSize: "0.75rem", fontFamily: "var(--font-mono)", color: "#f59e0b", width: "38px", textAlign: "right" }}>
+              {Math.round(circleFraction * 100)}%
+            </span>
           </div>
 
           {/* Rotate 90° Clockwise */}
