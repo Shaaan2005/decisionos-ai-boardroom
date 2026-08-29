@@ -253,15 +253,18 @@ export const AvatarCropModal = ({ isOpen, imageSrc, onClose, onApply }) => {
               src={imageSrc}
               alt="Avatar preview"
               onLoad={() => setImageLoaded(true)}
+              onError={() => setImageLoaded(true)}
               style={{
                 maxWidth: "260px",
                 maxHeight: "260px",
                 objectFit: "contain",
                 userSelect: "none",
                 pointerEvents: "none",
-                display: imageLoaded ? "block" : "none"
+                opacity: imageLoaded ? 1 : 0.01,
+                transition: "opacity 0.15s ease"
               }}
             />
+
           </div>
 
           {/* Dark Outer Mask with Circular Clear Viewport */}
