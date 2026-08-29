@@ -329,16 +329,17 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenPalette }) => {
                 onClick={() => handleTabChange("profile")}
                 title="View Profile & Values"
                 style={{
-                  width: "32px",
-                  height: "32px",
-                  borderRadius: "6px",
-                  background: user.profile?.avatar_url ? "#15120d" : "#f59e0b",
-                  border: user.profile?.avatar_url ? "1px solid #f59e0b" : "none",
+                  width: "34px",
+                  height: "34px",
+                  borderRadius: "50%",
+                  background: user.profile?.avatar_url ? "#15120d" : "linear-gradient(135deg, #f59e0b 0%, #ea580c 100%)",
+                  border: "2px solid #f59e0b",
+                  boxShadow: "0 0 12px rgba(245, 158, 11, 0.35)",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                   fontWeight: 900,
-                  fontSize: "0.82rem",
+                  fontSize: "0.85rem",
                   color: "#0b0907",
                   cursor: "pointer",
                   overflow: "hidden",
@@ -349,13 +350,14 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenPalette }) => {
                   <img
                     src={user.profile.avatar_url}
                     alt={user.full_name}
-                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                    style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "50%" }}
                   />
                 ) : (
                   user.full_name?.charAt(0).toUpperCase() || "U"
                 )}
               </div>
               <div className="desktop-only" style={{ display: "flex", flexDirection: "column" }}>
+
                 <span style={{ fontSize: "0.82rem", fontWeight: 700, color: "var(--text-primary)" }}>
                   {user.full_name}
                 </span>
@@ -442,16 +444,26 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenPalette }) => {
                 <div style={{
                   width: "32px",
                   height: "32px",
-                  borderRadius: "8px",
+                  borderRadius: item.id === "profile" && user?.profile?.avatar_url ? "50%" : "8px",
                   background: isActive ? "rgba(245, 158, 11, 0.18)" : "transparent",
-                  border: isActive ? "1px solid rgba(245, 158, 11, 0.4)" : "1px solid transparent",
+                  border: isActive ? "1.5px solid #f59e0b" : (item.id === "profile" && user?.profile?.avatar_url ? "1px solid rgba(245, 158, 11, 0.4)" : "1px solid transparent"),
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
+                  overflow: "hidden",
                   transition: "all 0.15s ease"
                 }}>
-                  <NavIcon size={18} color={isActive ? "#f59e0b" : "var(--text-secondary)"} />
+                  {item.id === "profile" && user?.profile?.avatar_url ? (
+                    <img 
+                      src={user.profile.avatar_url} 
+                      alt="Avatar" 
+                      style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "50%" }} 
+                    />
+                  ) : (
+                    <NavIcon size={18} color={isActive ? "#f59e0b" : "var(--text-secondary)"} />
+                  )}
                 </div>
+
                 <span style={{
                   fontSize: "0.68rem",
                   fontWeight: isActive ? 800 : 500,
