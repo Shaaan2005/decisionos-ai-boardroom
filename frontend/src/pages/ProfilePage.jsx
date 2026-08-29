@@ -63,21 +63,47 @@ export const ProfilePage = () => {
   const [savedSuccess, setSavedSuccess] = useState(false);
   const [error, setError] = useState("");
 
+  const compressImageToDataUrl = (file, maxDim = 256, quality = 0.88) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          let width = img.width;
+          let height = img.height;
+
+          // Square crop & scale to maxDim
+          const minDim = Math.min(width, height);
+          const startX = (width - minDim) / 2;
+          const startY = (height - minDim) / 2;
+
+          canvas.width = maxDim;
+          canvas.height = maxDim;
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(img, startX, startY, minDim, minDim, 0, 0, maxDim, maxDim);
+          const dataUrl = canvas.toDataURL("image/jpeg", quality);
+          resolve(dataUrl);
+        };
+        img.onerror = (err) => reject(err);
+        img.src = event.target.result;
+      };
+      reader.onerror = (err) => reject(err);
+      reader.readAsDataURL(file);
+    });
+  };
+
   const handleAvatarUpload = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
-    if (file.size > 5 * 1024 * 1024) {
-      playErrorSound();
-      setError(t("profile.avatar_size_error", "Avatar image must be smaller than 5 MB."));
-      return;
-    }
 
     setAvatarUploading(true);
     setError("");
     try {
       playClickSound();
-      await api.uploadAvatar(file);
+      // Compress and crop image to a crisp 256x256 circular-ready square
+      const compressedDataUrl = await compressImageToDataUrl(file, 256, 0.88);
+      await api.updateProfile({ avatar_url: compressedDataUrl });
       await refreshProfile();
       playSubmitSound();
       setSavedSuccess(true);
@@ -89,6 +115,7 @@ export const ProfilePage = () => {
       setAvatarUploading(false);
     }
   };
+
 
   const handleRemoveAvatar = async () => {
     if (window.confirm("Are you sure you want to remove your profile avatar?")) {
