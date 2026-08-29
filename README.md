@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="frontend/public/decisionos-logo.png" width="100" height="100" alt="DecisionOS Logo" style="border-radius: 20px; box-shadow: 0 0 25px rgba(245, 158, 11, 0.4);" />
+  <img src="frontend/public/decisionos-logo.png" width="110" height="110" alt="DecisionOS Logo" style="border-radius: 24px; box-shadow: 0 0 30px rgba(245, 158, 11, 0.4);" />
   
   # DecisionOS: AI-Powered Personal Board of Directors
   
@@ -21,44 +21,48 @@
 
 <br />
 
-> **DecisionOS** is an executive-grade strategic intelligence platform that empowers founders, engineering leaders, and ambitious professionals to navigate high-stakes career, business, and life decisions by simulating a personalized **AI Board of Directors**.
+---
+
+## 🌟 1. What is DecisionOS?
+
+**DecisionOS** is an executive-grade strategic intelligence platform that empowers founders, engineering leaders, and ambitious professionals to navigate high-stakes career, business, and architectural dilemmas.
+
+Instead of consulting a single chatbot that gives a generic answer, **DecisionOS simulates a personalized, autonomous Board of Directors** consisting of 6 specialized executive personas (CEO, CFO, CTO, Risk Analyst, Mentor, and Chairman). The advisors debate each other in real-time, cross-examine assumptions, recall historical precedents from long-term vector memory, and produce a unified, synthesized strategic verdict.
 
 ---
 
+## 💡 2. Why DecisionOS? (The Problem with Solo Decision-Making)
 
+When leaders face critical choices (fundraising, career pivots, tech stack overhauls, major investments), they usually face three core roadblocks:
 
-## 💡 Is DecisionOS Useful? Will People Actually Use It?
+1. **Isolation & Decision Fatigue:** Solo founders and executives have no trusted sparring partner to vigorously stress-test ideas without fear of judgment or bias.
+2. **Generic AI is a "Yes-Man" (Sycophancy):** If you ask a standard chatbot *"Should I quit my job and build this startup?"*, it almost always replies with enthusiastic validation. It does not vigorously attack your financial runway or run pre-mortem failure simulations.
+3. **Human Advice is Biased or Inaccessible:** Friends give emotional comfort, investors give self-interested advice, and elite executive coaches charge tens of thousands of dollars.
 
-The short answer is **yes, absolutely** — because it solves a painful, high-stakes problem that generic single-prompt AI tools fail at:
+### ⚔️ Generic AI Chatbots vs. DecisionOS
 
-### 1. 🧠 The Problem: The "Echo Chamber" of Solo Decision-Making
-When founders, engineers, and ambitious professionals face pivotal crossroads, they encounter three major roadblocks:
-* **Isolation & Decision Fatigue:** Solo founders and executives have no one to vigorously test their raw assumptions against without judgment.
-* **ChatGPT is a "Yes-Man" (Sycophancy):** Generic AI chatbots default to enthusiastic encouragement rather than demanding financial runway calculations or running pre-mortem failure simulations.
-* **Human Advice is Often Biased or Inaccessible:** Friends give emotional comfort, investors give self-interested guidance, and executive mentors are expensive or unavailable.
-
-### 2. 🏛️ Why DecisionOS is Genuinely Useful (The Moat)
-
-| What Generic Chatbots Do | What **DecisionOS** Delivers |
-| :--- | :--- |
-| **Single, agreeable response** | **6 Specialized Personas Debating Each Other** (CFO attacks financial assumptions; CEO defends upside; Risk Analyst installs 90-day tripwires). |
-| **Forgets everything across sessions** | **ChromaDB Vector Memory Vault:** Remembers past user choices, risk tolerance, and real-world outcomes over months. |
-| **Unstructured wall of text** | **Executive Deliverables:** Synthesized verdict, consensus score (0–100%), tension matrix, pre-mortem audit, and tactical roadmap. |
-| **Flat text interface** | **Spoken Multi-Agent Voice Boardroom:** Turn-synchronized speech narration, voice dictation, and standalone mobile app. |
-
-### 3. 🎯 Who Will Use It? (Target Audience)
-* **🚀 Solo Founders & Indie Hackers:** Acts as a 24/7 personal advisory board before spending capital, hiring, or building features.
-* **🛠️ Tech Leads & Senior Engineers:** Navigates complex architectural trade-offs (*Microservices vs Monolith*, *Build vs Buy*).
-* **📈 Ambitious Career Navigators:** Evaluates salary vs equity packages, leadership promotions, and geographic relocations.
-* **🎓 Graduates & Professionals:** Unpacks pivotal life and career crossroads with balanced, multi-dimensional counsel.
+| Dimension | Generic AI Chatbots | **DecisionOS (AI Boardroom)** |
+| :--- | :--- | :--- |
+| **Perspective** | Single agreeable "yes-man" response. | **6 Adversarial Executive Personas** actively challenging each other. |
+| **Memory** | Session-scoped; forgets context in new chats. | **ChromaDB Vector Vault:** Recalls user values, past choices & outcomes over months. |
+| **Adversarial Testing** | Surface-level pros and cons. | **Round-Table Cross-Examination:** CFO challenges ROI, Risk installs 90-day tripwires. |
+| **Deliverable** | Unstructured wall of chat text. | **Executive Deliverable:** Confidence score (0–100%), Tension Matrix, and Tactical Roadmap. |
+| **Experience & Modality**| Text-only typing. | **Spoken Voice Narration (TTS), Voice Dictation (STT), and Standalone Mobile App.** |
 
 ---
 
-## 🏛️ How DecisionOS Works
+## 🎯 3. Who is DecisionOS Built For?
 
-Instead of relying on a single generic AI prompt, **DecisionOS** orchestrates 6 specialized, autonomous AI agents representing executive board personas. The agents formulate models, deliberate independently, engage in round-table dialectical debate, and synthesize a cohesive strategic verdict backed by long-term vector memory.
+* **🚀 Solo Founders & Indie Hackers:** Acts as a 24/7 personal advisory board before spending capital, hiring, or pivoting product strategy.
+* **🛠️ Tech Leads & Senior Engineers:** Stress-tests architectural trade-offs (*Microservices vs Monolith*, *Build vs Buy*, *Refactoring vs Shipping*).
+* **📈 High-Stakes Career Navigators:** Evaluates salary vs equity packages, leadership promotions, and international relocations.
+* **🎓 Graduates & Ambitious Professionals:** Unpacks pivotal life crossroads with grounded, multi-dimensional counsel.
 
-### 🔄 Multi-Agent Deliberation Architecture
+---
+
+## ⚙️ 4. How It Works (Multi-Agent Deliberation Architecture)
+
+When you submit a strategic dilemma, DecisionOS orchestrates a multi-stage cognitive workflow:
 
 ```
                                  [ User Strategic Dilemma ]
@@ -87,55 +91,50 @@ Instead of relying on a single generic AI prompt, **DecisionOS** orchestrates 6 
 
 ---
 
-
-## 👥 The Autonomous Board Members
+## 👥 5. The Autonomous Board Members
 
 | Advisor | Role & Mandate | Strategic Lens |
 | :--- | :--- | :--- |
 | **CEO Agent** | *Chief Executive Officer* | Long-term compounding growth, market leverage, asymmetric upside, brand equity. |
 | **CFO Agent** | *Chief Financial Officer* | Financial runway modeling, risk-adjusted ROI, liquid cash preservation, equity discounting. |
-| **CTO Agent** | *Chief Technology Officer* | Skill velocity, technical mastery, architecture ownership, avoiding skill obsolescence. |
+| **CTO Agent** | *Chief Technology Officer* | Skill velocity, technical mastery, architecture ownership, avoiding technical debt & obsolescence. |
 | **Risk Analyst** | *Chief Risk Officer* | Pre-mortem auditing, worst-case scenario analysis, 90-day tripwires, downside hedging. |
 | **Mentor Agent** | *Life Strategy Guardian* | Alignment with authentic personal values, work-life balance, retrospective memory retrieval. |
 | **Chairman Agent** | *Board Moderator & Arbiter* | Synthesizes opposing viewpoints, calculates consensus score, delivers binding verdict. |
 
 ---
 
-## 🚀 Key Features
+## 🚀 6. Core Features & Capabilities
 
 1. **Multi-Agent Dialectical Debate (LangGraph)**
-   - Autonomous cross-examination where advisors challenge each other's assumptions (e.g. CFO questions equity liquidity; CEO defends upside asymmetry; Risk Analyst installs 90-day tripwires).
+   - Autonomous cross-examination where advisors challenge each other's assumptions in round-table deliberation.
 2. **Semantic Memory Vault (ChromaDB)**
-   - Embeds past user decisions, chosen alternatives, and retrospective outcomes.
-   - Automatically retrieves historical learnings during new deliberations (e.g. *"Reflecting on your choice in 2024, you prioritized learning velocity over comfort..."*).
+   - Embeds past user decisions, chosen alternatives, and retrospective outcomes. Automatically retrieves historical learnings during new deliberations.
 3. **Comprehensive Executive Deliverables**
-   - Official Recommendation & Verdict
+   - Official Recommendation & Final Verdict
    - Confidence Score Gauge (0–100%)
    - Unanimous Agreements vs. Debated Tensions Matrix
    - Pre-Mortem Risk Audit & Tactical Safeguards
    - Step-by-Step Action Roadmap
 4. **Explainability & Interactive Board Debrief ("Ask the Board")**
-   - Directly query individual board members (e.g. *"CFO, why did you advise against Option B?"*) or the entire board with grounded responses.
-5. **Retrospective Outcome Tracking**
-   - Log actual real-world outcomes 3/6/12 months later to benchmark predictions and continuously improve board accuracy.
-6. **Synchronized Voice Narration (TTS) & On-Demand Speech**
+   - Directly interrogate individual board members (e.g. *"CFO, why did you advise against Option B?"*) or the entire board with grounded responses.
+5. **Synchronized Voice Narration (TTS) & On-Demand Speech**
    - Real-time spoken debate narration where advisor turn progressions wait synchronously for speech synthesis before advancing.
    - Interactive on-demand speaker playback while paused.
-7. **Hands-Free Speech-to-Text Dictation**
+6. **Hands-Free Speech-to-Text Dictation**
    - Pre-flight microphone permission handshake for high-accuracy voice dictation when submitting dilemmas or chatting with copilot.
-8. **Progressive Web App (PWA) & Direct Android APK**
+7. **Progressive Web App (PWA) & Direct Android APK**
    - 100% store-ready PWA with offline caching (`/sw.js`), Apple touch home-screen engine, and direct `.apk` binary distribution.
-9. **Global Multi-Language Support (12+ Languages)**
+8. **Global Multi-Language Support (12+ Languages)**
    - Dynamic localization (English, Hindi, Spanish, French, German, Japanese, Chinese, Arabic, Russian, Portuguese, etc.) with localized voice audio synthesis.
-10. **Interactive Avatar Studio**
-    - Zero-lag 120 FPS draggable & expandable circular lens cropper with client-side canvas processing.
-11. **Executive Glassmorphism Cockpit UI**
+9. **Interactive Avatar Studio**
+   - Zero-lag 120 FPS draggable & expandable circular lens cropper with client-side canvas processing.
+10. **Executive Glassmorphism Cockpit UI**
     - Dynamic radial boardroom visualizer, consensus metrics, and command palette (`Ctrl + K`).
 
 ---
 
-
-## 🛠️ Tech Stack
+## 🛠️ 7. Tech Stack
 
 - **Backend**: Python 3.11+, FastAPI, SQLAlchemy (Async), SQLite / PostgreSQL, Pydantic v2.
 - **Orchestration**: LangGraph, LangChain Core.
@@ -143,10 +142,11 @@ Instead of relying on a single generic AI prompt, **DecisionOS** orchestrates 6 
 - **Security**: JWT Authentication (python-jose, bcrypt).
 - **Frontend**: React 18, Vite, Lucide React, Custom Dark Glassmorphism CSS Design System.
 - **LLM Support**: Ollama (Llama 3, Mistral), OpenAI API, and High-Fidelity Simulation Engine.
+- **Mobile Distribution**: Progressive Web App (PWA), Trusted Web Activity (TWA), Direct Android APK.
 
 ---
 
-## ⚡ Quick Start
+## ⚡ 8. Quick Start & Setup
 
 ### 1. Clone & Setup Backend
 
@@ -181,33 +181,18 @@ pytest tests -v
 
 ## 🐳 Docker Deployment
 
-Set these secrets before starting the stack:
-
-```bash
-# PowerShell
-$env:SECRET_KEY = "replace-with-a-long-random-secret"
-$env:POSTGRES_PASSWORD = "replace-with-a-strong-database-password"
-```
-
 ```bash
 docker-compose up --build
 ```
 - Frontend: `http://localhost:3000`
 - Backend API: `http://localhost:8000`
 
-## ☁️ Render Deployment
+---
 
-The repository includes `render.yaml` for a Render Blueprint deployment.
+## ☁️ Cloud Deployment (Render + Vercel)
 
-1. Push this repository to GitHub.
-2. In Render, choose **New → Blueprint** and select the repository.
-3. Set `BACKEND_CORS_ORIGINS` on `decisionos-api` to the deployed frontend URL.
-4. Set `VITE_API_URL` on `decisionos-web` to the backend URL plus `/api`, such as `https://decisionos-api.onrender.com/api`.
-5. Redeploy `decisionos-web` after setting `VITE_API_URL`.
-
-The API enforces PostgreSQL and a strong `SECRET_KEY` when `ENVIRONMENT=production`.
-
-Render creates the backend, frontend, and PostgreSQL services from `render.yaml`.
+- **Frontend (Vercel):** Connected to `main` branch with automatic edge deployments.
+- **Backend (Render):** Deployable via the included `render.yaml` Blueprint with managed PostgreSQL and ChromaDB persistent storage.
 
 ---
 
