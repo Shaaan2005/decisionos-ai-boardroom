@@ -33,6 +33,8 @@ import {
 import { getCustomLlmKey } from "../utils/llmKeyStore";
 import { useLanguage } from "../context/LanguageContext";
 
+import { AvatarCropModal } from "../components/AvatarCropModal";
+
 export const ProfilePage = () => {
   const { user, refreshProfile } = useAuth();
   const { t } = useLanguage();
@@ -46,8 +48,10 @@ export const ProfilePage = () => {
   const [newValInput, setNewValInput] = useState("");
   const [personalContext, setPersonalContext] = useState("");
   
-  // Avatar state
+  // Avatar crop modal state
   const [avatarUploading, setAvatarUploading] = useState(false);
+  const [cropModalOpen, setCropModalOpen] = useState(false);
+  const [cropImageSrc, setCropImageSrc] = useState(null);
   const avatarInputRef = useRef(null);
 
   // Resume extraction state
@@ -63,58 +67,37 @@ export const ProfilePage = () => {
   const [savedSuccess, setSavedSuccess] = useState(false);
   const [error, setError] = useState("");
 
-  const compressImageToDataUrl = (file, maxDim = 256, quality = 0.88) => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        const img = new Image();
-        img.onload = () => {
-          const canvas = document.createElement("canvas");
-          let width = img.width;
-          let height = img.height;
-
-          // Square crop & scale to maxDim
-          const minDim = Math.min(width, height);
-          const startX = (width - minDim) / 2;
-          const startY = (height - minDim) / 2;
-
-          canvas.width = maxDim;
-          canvas.height = maxDim;
-          const ctx = canvas.getContext("2d");
-          ctx.drawImage(img, startX, startY, minDim, minDim, 0, 0, maxDim, maxDim);
-          const dataUrl = canvas.toDataURL("image/jpeg", quality);
-          resolve(dataUrl);
-        };
-        img.onerror = (err) => reject(err);
-        img.src = event.target.result;
-      };
-      reader.onerror = (err) => reject(err);
-      reader.readAsDataURL(file);
-    });
-  };
-
-  const handleAvatarUpload = async (e) => {
+  const handleAvatarFileSelect = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    playClickSound();
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      setCropImageSrc(event.target.result);
+      setCropModalOpen(true);
+    };
+    reader.readAsDataURL(file);
+    // Reset file input so same file can be selected again if needed
+    e.target.value = "";
+  };
+
+  const handleApplyCroppedAvatar = async (dataUrl) => {
     setAvatarUploading(true);
     setError("");
     try {
-      playClickSound();
-      // Compress and crop image to a crisp 256x256 circular-ready square
-      const compressedDataUrl = await compressImageToDataUrl(file, 256, 0.88);
-      await api.updateProfile({ avatar_url: compressedDataUrl });
+      await api.updateProfile({ avatar_url: dataUrl });
       await refreshProfile();
-      playSubmitSound();
       setSavedSuccess(true);
       setTimeout(() => setSavedSuccess(false), 3000);
     } catch (err) {
       playErrorSound();
-      setError(err.message || "Failed to upload avatar");
+      setError(err.message || "Failed to save cropped avatar");
     } finally {
       setAvatarUploading(false);
     }
   };
+
 
 
   const handleRemoveAvatar = async () => {
@@ -322,10 +305,11 @@ export const ProfilePage = () => {
       <input
         type="file"
         ref={avatarInputRef}
-        onChange={handleAvatarUpload}
+        onChange={handleAvatarFileSelect}
         accept="image/*"
         style={{ display: "none" }}
       />
+
 
       {/* ─────────────────────────────────────────────
           SECTION 0: EXECUTIVE AVATAR & IDENTITY CARD
@@ -1184,7 +1168,16 @@ const CustomBoardAdvisorSection = () => {
           </div>
         ))}
       </div>
+
+      {/* Discord-Style Interactive Avatar Crop & Adjust Modal */}
+      <AvatarCropModal
+        isOpen={cropModalOpen}
+        imageSrc={cropImageSrc}
+        onClose={() => setCropModalOpen(false)}
+        onApply={handleApplyCroppedAvatar}
+      />
     </div>
   );
 };
+
 
