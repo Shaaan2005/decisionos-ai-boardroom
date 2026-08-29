@@ -16,7 +16,7 @@ import {
   MicOff
 } from "lucide-react";
 import { playPopSound, playRemoveSound, playSubmitSound, playClickSound, playErrorSound } from "../utils/audioUtils";
-import { isSpeechRecognitionSupported, createSpeechRecognizer, getLanguageSpeechCode } from "../utils/voiceInputUtils";
+import { isSpeechRecognitionSupported, createSpeechRecognizer, getLanguageSpeechCode, requestMicPermission } from "../utils/voiceInputUtils";
 import { useLanguage } from "../context/LanguageContext";
 
 export const NewDecisionPage = ({ onCancel, onCreated }) => {
@@ -42,7 +42,7 @@ export const NewDecisionPage = ({ onCancel, onCreated }) => {
     };
   }, []);
 
-  const toggleDictation = (field) => {
+  const toggleDictation = async (field) => {
     playPopSound();
     if (!isSpeechRecognitionSupported()) {
       playErrorSound();
@@ -62,6 +62,15 @@ export const NewDecisionPage = ({ onCancel, onCreated }) => {
       }
 
       setError("");
+
+      // Explicitly prompt for mic permission if needed
+      const perm = await requestMicPermission();
+      if (!perm.granted) {
+        playErrorSound();
+        setError("Microphone permission was denied. Please click the lock or camera icon in your browser URL bar to allow microphone access.");
+        return;
+      }
+
       const initialText = field === "title" ? title : description;
       const speechLang = getLanguageSpeechCode(language || "en");
 
@@ -84,8 +93,8 @@ export const NewDecisionPage = ({ onCancel, onCreated }) => {
         },
         onError: (err) => {
           console.warn("Dictation error:", err);
-          if (err.error === "not-allowed" || err.error === "permission-denied") {
-            setError(err.message || "Microphone access was denied. Please allow microphone permissions in your browser URL bar.");
+          if (err.message) {
+            setError(err.message);
             playErrorSound();
           }
           setActiveDictationField(null);
@@ -102,12 +111,13 @@ export const NewDecisionPage = ({ onCancel, onCreated }) => {
           setActiveDictationField(field);
         } catch (startErr) {
           console.error("Failed to start speech recognition:", startErr);
-          setError("Failed to start microphone. Please check your browser mic permissions.");
+          setError("Speech engine busy. Please click Dictate again.");
           setActiveDictationField(null);
         }
       }
     }
   };
+
 
   
   const [options, setOptions] = useState([

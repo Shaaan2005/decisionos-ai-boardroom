@@ -8,6 +8,20 @@ export function isSpeechRecognitionSupported() {
   return Boolean(window.SpeechRecognition || window.webkitSpeechRecognition);
 }
 
+export async function requestMicPermission() {
+  if (typeof navigator !== "undefined" && navigator.mediaDevices?.getUserMedia) {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      stream.getTracks().forEach(track => track.stop());
+      return { granted: true };
+    } catch (err) {
+      console.warn("Microphone permission check:", err);
+      return { granted: false, error: err.name || err.message };
+    }
+  }
+  return { granted: true };
+}
+
 export function getLanguageSpeechCode(langCode = "en") {
   const map = {
     en: "en-US",
@@ -21,7 +35,7 @@ export function getLanguageSpeechCode(langCode = "en") {
     ar: "ar-SA",
     ru: "ru-RU"
   };
-  return map[langCode] || langCode || "en-US";
+  return map[langCode] || langCode || (typeof navigator !== "undefined" ? navigator.language : "en-US");
 }
 
 export function createSpeechRecognizer({
@@ -72,15 +86,16 @@ export function createSpeechRecognizer({
   };
 
   recognition.onerror = (err) => {
-    let message = "Speech recognition error.";
+    let message = "Speech recognition encountered an issue.";
     if (err.error === "not-allowed" || err.error === "permission-denied") {
-      message = "Microphone access was denied. Please click the camera/mic icon in your browser URL bar to allow microphone permissions.";
+      message = "Microphone access was denied. Please click the lock or camera/mic icon in your browser URL bar and set Microphone to 'Allow'.";
     } else if (err.error === "no-speech") {
-      message = "No speech detected. Please speak clearly into your microphone.";
+      // Don't treat silence as fatal error
+      return;
     } else if (err.error === "network") {
-      message = "Speech network connection error. Please check your internet connection.";
+      message = "Speech network service unavailable. If you are using Brave browser, please enable 'Use Google Services for Speech Recognition' in brave://settings/privacy or use Chrome / Edge.";
     } else if (err.error === "audio-capture") {
-      message = "No microphone hardware found or microphone is in use by another app.";
+      message = "No microphone hardware found. Please verify your microphone is plugged in.";
     }
     onError({ error: err.error, message, original: err });
   };
