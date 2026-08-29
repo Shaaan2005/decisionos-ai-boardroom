@@ -15,15 +15,19 @@ import {
   Check,
   Search,
   Command,
-  Bot
+  Bot,
+  Smartphone
 } from "lucide-react";
 import { playNavSound, playClickSound, playPopSound } from "../utils/audioUtils";
+import InstallAppModal from "./InstallAppModal";
 
 export const Navbar = ({ activeTab, setActiveTab, onOpenPalette }) => {
   const { user, logout } = useAuth();
   const { language, setLanguage, t, currentLanguageConfig } = useLanguage();
   const [langMenuOpen, setLangMenuOpen] = useState(false);
+  const [installModalOpen, setInstallModalOpen] = useState(false);
   const langMenuRef = useRef(null);
+
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -183,6 +187,33 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenPalette }) => {
 
         {/* Right Section: Language Dropdown + User Status & Logout */}
         <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0 }}>
+          {/* Download Mobile App / PWA Trigger */}
+          <button
+            type="button"
+            onClick={() => {
+              playPopSound();
+              setInstallModalOpen(true);
+            }}
+            title="Download DecisionOS Mobile App"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "6px",
+              padding: "6px 12px",
+              fontSize: "0.8rem",
+              background: "linear-gradient(135deg, rgba(245, 158, 11, 0.2) 0%, rgba(217, 119, 6, 0.3) 100%)",
+              border: "1px solid rgba(245, 158, 11, 0.45)",
+              color: "#fef08a",
+              borderRadius: "8px",
+              fontWeight: 800,
+              cursor: "pointer",
+              boxShadow: "0 0 15px rgba(245, 158, 11, 0.25)"
+            }}
+          >
+            <Smartphone size={15} color="#f59e0b" />
+            <span>Get App</span>
+          </button>
+
           {/* Quick Board Copilot Trigger (Desktop only) */}
           <button
             type="button"
@@ -207,6 +238,7 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenPalette }) => {
             <Bot size={15} color="#f59e0b" />
             <span>Copilot</span>
           </button>
+
 
           {/* Search / Command Palette Trigger Button (Desktop only) */}
           {onOpenPalette && (
@@ -524,7 +556,15 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenPalette }) => {
           </button>
         </div>
       </div>
+
+      {/* Mobile App & APK Download Modal */}
+      <InstallAppModal
+        isOpen={installModalOpen}
+        onClose={() => setInstallModalOpen(false)}
+      />
     </nav>
   );
 };
+
+
 
