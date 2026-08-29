@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://decisionos-ai-boardroom.vercel.app/sitemap.xml
