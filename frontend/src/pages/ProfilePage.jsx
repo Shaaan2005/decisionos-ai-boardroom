@@ -883,11 +883,20 @@ export const ProfilePage = () => {
           SECTION 3: CUSTOM BOARD SEAT & PERSONA ADVISOR CREATOR
       ───────────────────────────────────────────── */}
       <CustomBoardAdvisorSection />
+
+      {/* Discord-Style Interactive Avatar Crop & Adjust Modal */}
+      <AvatarCropModal
+        isOpen={cropModalOpen}
+        imageSrc={cropImageSrc}
+        onClose={() => setCropModalOpen(false)}
+        onApply={handleApplyCroppedAvatar}
+      />
     </div>
   );
 };
 
 const CustomBoardAdvisorSection = () => {
+
   const [customAdvisors, setCustomAdvisors] = useState(() => {
     const saved = localStorage.getItem("decisionos_custom_advisors");
     if (saved) {
@@ -1168,16 +1177,6 @@ const CustomBoardAdvisorSection = () => {
           </div>
         ))}
       </div>
-
-      {/* Discord-Style Interactive Avatar Crop & Adjust Modal */}
-      <AvatarCropModal
-        isOpen={cropModalOpen}
-        imageSrc={cropImageSrc}
-        onClose={() => setCropModalOpen(false)}
-        onApply={handleApplyCroppedAvatar}
-      />
     </div>
   );
 };
-
-
