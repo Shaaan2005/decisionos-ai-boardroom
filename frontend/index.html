@@ -23,6 +23,16 @@
           navigator.serviceWorker.register('/sw.js', { scope: '/' })
             .then(function(reg) {
               console.log('DecisionOS PWA Service Worker Registered:', reg.scope);
+              // Register Background Sync if supported
+              if ('sync' in reg) {
+                reg.sync.register('decisionos-sync').catch(function() {});
+              }
+              // Register Periodic Background Sync if supported
+              if ('periodicSync' in reg) {
+                reg.periodicSync.register('decisionos-periodic-sync', {
+                  minInterval: 24 * 60 * 60 * 1000
+                }).catch(function() {});
+              }
             })
             .catch(function(err) {
               console.warn('Service Worker registration failed:', err);
@@ -30,6 +40,7 @@
         });
       }
     </script>
+
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

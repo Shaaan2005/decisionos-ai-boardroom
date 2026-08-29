@@ -7,10 +7,34 @@
   "scope": "/",
   "display": "standalone",
   "display_override": [
-    "window-controls-overlay",
     "tabbed",
+    "window-controls-overlay",
     "standalone",
     "minimal-ui"
+  ],
+  "tab_strip": {
+    "home_tab": {
+      "icons": [
+        {
+          "src": "/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    "new_tab_button": {
+      "url": "/?tab=new"
+    }
+  },
+  "scope_extensions": [
+    {
+      "origin": "decisionos-ai-boardroom.vercel.app"
+    },
+    {
+      "origin": "*.vercel.app"
+    },
+    {
+      "origin": "decisionos-ai-boardroom.onrender.com"
+    }
   ],
   "orientation": "portrait-primary",
   "background_color": "#0b0907",
@@ -63,14 +87,6 @@
   "note_taking": {
     "new_note_url": "/?mode=new_decision"
   },
-  "scope_extensions": [
-    {
-      "origin": "https://decisionos-ai-boardroom.vercel.app"
-    },
-    {
-      "origin": "https://decisionos-ai-boardroom.onrender.com"
-    }
-  ],
   "launch_handler": {
     "client_mode": "auto"
   },
