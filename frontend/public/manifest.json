@@ -23,7 +23,50 @@
     "finance"
   ],
   "prefer_related_applications": false,
-  "related_applications": [],
+  "related_applications": [
+    {
+      "platform": "play",
+      "url": "https://play.google.com/store/apps/details?id=com.decisionos.app",
+      "id": "com.decisionos.app"
+    }
+  ],
+  "iarc_rating_id": "e84b072d-71b3-4d3e-86ae-31a8ce4e53b7",
+  "widgets": [
+    {
+      "name": "DecisionOS Executive Status",
+      "short_name": "DecisionOS",
+      "description": "Quick view of active deliberations and consensus",
+      "tag": "decisionos-status",
+      "template": "widget-template",
+      "ms_ac_template": "widget.json",
+      "data": "widget-data.json",
+      "type": "application/json",
+      "screenshots": [
+        {
+          "src": "/screenshot-narrow.png",
+          "sizes": "720x1280",
+          "label": "Widget preview"
+        }
+      ],
+      "icons": [
+        {
+          "src": "/decisionos-logo.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ],
+  "edge_side_panel": {
+    "preferred_width": 420
+  },
+  "note_taking": {
+    "new_note_url": "/?mode=new_decision"
+  },
+  "scope_extensions": [
+    {
+      "origin": "https://decisionos-ai-boardroom.vercel.app"
+    }
+  ],
   "launch_handler": {
     "client_mode": "auto"
   },
