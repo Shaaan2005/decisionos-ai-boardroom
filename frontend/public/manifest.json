@@ -1,5 +1,5 @@
 {
-  "id": "decisionos-ai-boardroom",
+  "id": "https://decisionos-ai-boardroom.vercel.app/",
   "name": "DecisionOS - AI Personal Board of Directors",
   "short_name": "DecisionOS",
   "description": "Autonomous executive AI Personal Board of Directors powered by multi-agent consensus.",
@@ -23,6 +23,35 @@
     "finance"
   ],
   "prefer_related_applications": false,
+  "related_applications": [],
+  "launch_handler": {
+    "client_mode": "auto"
+  },
+  "share_target": {
+    "action": "/",
+    "method": "GET",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
+  },
+  "protocol_handlers": [
+    {
+      "protocol": "web+decisionos",
+      "url": "/?dilemma=%s"
+    }
+  ],
+  "file_handlers": [
+    {
+      "action": "/",
+      "accept": {
+        "text/plain": [".txt", ".md"],
+        "application/pdf": [".pdf"],
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document": [".docx"]
+      }
+    }
+  ],
   "icons": [
     {
       "src": "/decisionos-logo.png",
