@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "app.vercel.decisionos_ai_boardroom.twa",
+      "sha256_cert_fingerprints": [
+        "B0:B0:C8:99:CA:B0:A3:09:2F:6C:13:20:2C:42:4E:68:4B:DD:6D:2D:11:7C:30:86:D0:09:7B:9B:66:7F:DB:47"
+      ]
+    }
+  }
+]
