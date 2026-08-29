@@ -29,8 +29,32 @@
 
 ## 🏛️ Why DecisionOS?
 
-Instead of relying on a single generic AI chatbot prompt, **DecisionOS** orchestrates 6 specialized, autonomous AI agents representing executive board personas. The agents formulate models, deliberate independently, engage in round-table dialectical debate, and synthesize a cohesive strategic verdict backed by long-term vector memory.
+When leaders face high-stakes dilemmas (fundraising, career pivots, architectural rewrites, personal investments), single-prompt generic AI chatbots fail due to **sycophancy** (they agree with whatever the user says) and a lack of adversarial tension.
 
+**DecisionOS** solves the echo chamber of solo decision-making by orchestrating 6 specialized, autonomous AI agents representing executive board personas. The agents formulate models, deliberate independently, engage in round-table dialectical debate, and synthesize a cohesive strategic verdict backed by long-term vector memory.
+
+### ⚔️ Generic AI Chatbots vs. DecisionOS
+
+| Dimension | Generic AI Chatbots | **DecisionOS (AI Boardroom)** |
+| :--- | :--- | :--- |
+| **Perspective** | Single agreeable "yes-man" response. | **6 Adversarial Executive Personas** actively challenging each other. |
+| **Memory** | Session-scoped; forgets context in new chats. | **ChromaDB Vector Vault:** Recalls user values, past choices & outcomes. |
+| **Adversarial Testing** | Surface-level pros and cons. | **Round-Table Cross-Examination:** CFO challenges ROI, Risk installs tripwires. |
+| **Deliverable** | Unstructured wall of chat text. | **Executive Deliverable:** Confidence score (0–100%), Tension Matrix & Roadmap. |
+| **Modalities** | Text-only typing. | **Spoken Narration (TTS), Voice Dictation (STT), and Native Mobile App.** |
+
+---
+
+### 🎯 Who is DecisionOS Built For?
+
+* **🚀 Solo Founders & Indie Hackers:** Access a 24/7 advisory board before burning capital, hiring, or pivoting product strategy.
+* **🛠️ Engineering & Product Leaders:** Stress-test architectural trade-offs (e.g. *Monolith vs Microservices*, *Build vs Buy*).
+* **📈 High-Stakes Career Navigators:** Evaluate salary vs equity packages, leadership promotions, and geographic relocations.
+* **🎓 Ambitious Professionals & Students:** Unpack pivotal life crossroads with structured, multi-dimensional counsel.
+
+---
+
+### 🔄 Multi-Agent Deliberation Architecture
 ```
                                  [ User Strategic Dilemma ]
                                              │
@@ -57,6 +81,7 @@ Instead of relying on a single generic AI chatbot prompt, **DecisionOS** orchest
 ```
 
 ---
+
 
 ## 👥 The Autonomous Board Members
 
