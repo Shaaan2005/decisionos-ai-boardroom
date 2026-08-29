@@ -1,14 +1,21 @@
 # DecisionOS: AI-Powered Personal Board of Directors
 
+[![Live Web App](https://img.shields.io/badge/Live_App-Vercel-black?logo=vercel&logoColor=white)](https://decisionos-ai-boardroom.vercel.app)
+[![Android APK](https://img.shields.io/badge/Android_App-Download_.APK-green?logo=android&logoColor=white)](https://decisionos-ai-boardroom.vercel.app/DecisionOS.apk)
+[![PWA](https://img.shields.io/badge/PWA-iOS_%26_Android_Ready-F59E0B.svg?logo=pwa&logoColor=white)](https://decisionos-ai-boardroom.vercel.app)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.110+-009688.svg?logo=fastapi)](https://fastapi.tiangolo.com)
 [![LangGraph](https://img.shields.io/badge/LangGraph-Multi--Agent-FF6F00.svg)](https://github.com/langchain-ai/langgraph)
 [![ChromaDB](https://img.shields.io/badge/ChromaDB-Vector_Memory-purple.svg)](https://www.trychroma.com/)
 [![React](https://img.shields.io/badge/React-18.3-61DAFB.svg?logo=react)](https://reactjs.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-> **DecisionOS** is an executive-grade strategic intelligence platform that empowers founders, engineering leaders, and ambitious professionals to make high-stakes career, business, and life decisions by simulating a personalized **AI Board of Directors**.
+> **DecisionOS** is an executive-grade strategic intelligence platform that empowers founders, engineering leaders, and ambitious professionals to navigate high-stakes dilemmas by simulating a personalized **AI Board of Directors**.
+
+🔗 **Live Platform:** [https://decisionos-ai-boardroom.vercel.app](https://decisionos-ai-boardroom.vercel.app)  
+📲 **Download Android App:** [Direct APK Download](https://decisionos-ai-boardroom.vercel.app/DecisionOS.apk)
 
 ---
+
 
 ## 🏛️ Why DecisionOS?
 
@@ -71,10 +78,22 @@ Instead of relying on a single generic AI chatbot prompt, **DecisionOS** orchest
    - Directly query individual board members (e.g. *"CFO, why did you advise against Option B?"*) or the entire board with grounded responses.
 5. **Retrospective Outcome Tracking**
    - Log actual real-world outcomes 3/6/12 months later to benchmark predictions and continuously improve board accuracy.
-6. **Executive Glassmorphism UI**
-   - Built with React, Vite, and Lucide icons featuring a real-time circular boardroom visualizer and active speaker spotlight.
+6. **Synchronized Voice Narration (TTS) & On-Demand Speech**
+   - Real-time spoken debate narration where advisor turn progressions wait synchronously for speech synthesis before advancing.
+   - Interactive on-demand speaker playback while paused.
+7. **Hands-Free Speech-to-Text Dictation**
+   - Pre-flight microphone permission handshake for high-accuracy voice dictation when submitting dilemmas or chatting with copilot.
+8. **Progressive Web App (PWA) & Direct Android APK**
+   - 100% store-ready PWA with offline caching (`/sw.js`), Apple touch home-screen engine, and direct `.apk` binary distribution.
+9. **Global Multi-Language Support (12+ Languages)**
+   - Dynamic localization (English, Hindi, Spanish, French, German, Japanese, Chinese, Arabic, Russian, Portuguese, etc.) with localized voice audio synthesis.
+10. **Interactive Avatar Studio**
+    - Zero-lag 120 FPS draggable & expandable circular lens cropper with client-side canvas processing.
+11. **Executive Glassmorphism Cockpit UI**
+    - Dynamic radial boardroom visualizer, consensus metrics, and command palette (`Ctrl + K`).
 
 ---
+
 
 ## 🛠️ Tech Stack
 
