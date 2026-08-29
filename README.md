@@ -1,20 +1,30 @@
-# DecisionOS: AI-Powered Personal Board of Directors
+<div align="center">
+  <img src="frontend/public/decisionos-logo.png" width="100" height="100" alt="DecisionOS Logo" style="border-radius: 20px; box-shadow: 0 0 25px rgba(245, 158, 11, 0.4);" />
+  
+  # DecisionOS: AI-Powered Personal Board of Directors
+  
+  <p><b>Autonomous Executive Strategic Intelligence Platform powered by Multi-Agent Consensus & Long-Term Vector Memory</b></p>
 
-[![Live Web App](https://img.shields.io/badge/Live_App-Vercel-black?logo=vercel&logoColor=white)](https://decisionos-ai-boardroom.vercel.app)
-[![Android APK](https://img.shields.io/badge/Android_App-Download_.APK-green?logo=android&logoColor=white)](https://decisionos-ai-boardroom.vercel.app/DecisionOS.apk)
-[![PWA](https://img.shields.io/badge/PWA-iOS_%26_Android_Ready-F59E0B.svg?logo=pwa&logoColor=white)](https://decisionos-ai-boardroom.vercel.app)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.110+-009688.svg?logo=fastapi)](https://fastapi.tiangolo.com)
-[![LangGraph](https://img.shields.io/badge/LangGraph-Multi--Agent-FF6F00.svg)](https://github.com/langchain-ai/langgraph)
-[![ChromaDB](https://img.shields.io/badge/ChromaDB-Vector_Memory-purple.svg)](https://www.trychroma.com/)
-[![React](https://img.shields.io/badge/React-18.3-61DAFB.svg?logo=react)](https://reactjs.org/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+  [![Live Web App](https://img.shields.io/badge/Live_App-Vercel-black?logo=vercel&logoColor=white)](https://decisionos-ai-boardroom.vercel.app)
+  [![Android APK](https://img.shields.io/badge/Android_App-Download_.APK-green?logo=android&logoColor=white)](https://decisionos-ai-boardroom.vercel.app/DecisionOS.apk)
+  [![PWA](https://img.shields.io/badge/PWA-iOS_%26_Android_Ready-F59E0B.svg?logo=pwa&logoColor=white)](https://decisionos-ai-boardroom.vercel.app)
+  [![FastAPI](https://img.shields.io/badge/FastAPI-0.110+-009688.svg?logo=fastapi)](https://fastapi.tiangolo.com)
+  [![LangGraph](https://img.shields.io/badge/LangGraph-Multi--Agent-FF6F00.svg)](https://github.com/langchain-ai/langgraph)
+  [![ChromaDB](https://img.shields.io/badge/ChromaDB-Vector_Memory-purple.svg)](https://www.trychroma.com/)
+  [![React](https://img.shields.io/badge/React-18.3-61DAFB.svg?logo=react)](https://reactjs.org/)
+  [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-> **DecisionOS** is an executive-grade strategic intelligence platform that empowers founders, engineering leaders, and ambitious professionals to navigate high-stakes dilemmas by simulating a personalized **AI Board of Directors**.
+  <br />
 
-🔗 **Live Platform:** [https://decisionos-ai-boardroom.vercel.app](https://decisionos-ai-boardroom.vercel.app)  
-📲 **Download Android App:** [Direct APK Download](https://decisionos-ai-boardroom.vercel.app/DecisionOS.apk)
+  [🌐 **Live Web Application**](https://decisionos-ai-boardroom.vercel.app) • [📲 **Download Android APK**](https://decisionos-ai-boardroom.vercel.app/DecisionOS.apk) • [📖 **API Documentation**](https://decisionos-ai-boardroom.onrender.com/docs)
+</div>
+
+<br />
+
+> **DecisionOS** is an executive-grade strategic intelligence platform that empowers founders, engineering leaders, and ambitious professionals to navigate high-stakes career, business, and life decisions by simulating a personalized **AI Board of Directors**.
 
 ---
+
 
 
 ## 🏛️ Why DecisionOS?
