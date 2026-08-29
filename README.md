@@ -31,15 +31,20 @@ Instead of consulting a single chatbot that gives a generic answer, **DecisionOS
 
 ---
 
-## 💡 2. Why DecisionOS? (The Problem with Solo Decision-Making)
+## 💡 2. Is DecisionOS Useful? Will People Actually Use It?
 
-When leaders face critical choices (fundraising, career pivots, tech stack overhauls, major investments), they usually face three core roadblocks:
+The short answer is **yes, absolutely** — because it solves a painful, high-stakes problem that generic single-prompt AI tools fail at:
 
-1. **Isolation & Decision Fatigue:** Solo founders and executives have no trusted sparring partner to vigorously stress-test ideas without fear of judgment or bias.
-2. **Generic AI is a "Yes-Man" (Sycophancy):** If you ask a standard chatbot *"Should I quit my job and build this startup?"*, it almost always replies with enthusiastic validation. It does not vigorously attack your financial runway or run pre-mortem failure simulations.
-3. **Human Advice is Biased or Inaccessible:** Friends give emotional comfort, investors give self-interested advice, and elite executive coaches charge tens of thousands of dollars.
+### 🧠 The Problem: The "Echo Chamber" of Solo Decision-Making
+
+When people face high-stakes dilemmas (career shifts, fundraising, tech rewrites, hiring, personal investments), they usually suffer from three problems:
+
+* **Isolation & Decision Fatigue:** Founders, solo engineers, and executives have no one to test their raw ideas against without fear of judgment or bias.
+* **ChatGPT is a "Yes-Man" (Sycophancy):** If you ask a single chatbot *"Should I quit my job and build this startup?"*, it almost always replies with enthusiastic encouragement. It does not vigorously stress-test your downside or demand a financial runway calculation.
+* **Human Advice is Biased:** Friends give emotional comfort; investors give self-interested advice; mentors have limited time.
 
 ### ⚔️ Generic AI Chatbots vs. DecisionOS
+
 
 | Dimension | Generic AI Chatbots | **DecisionOS (AI Boardroom)** |
 | :--- | :--- | :--- |
