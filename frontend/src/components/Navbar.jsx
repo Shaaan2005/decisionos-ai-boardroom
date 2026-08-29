@@ -57,13 +57,13 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenPalette }) => {
     <nav style={{
       position: "sticky",
       top: 0,
-      zIndex: 50,
+      zIndex: 999,
       background: "rgba(11, 9, 7, 0.94)",
       borderBottom: "1px solid var(--border-subtle)",
       padding: "clamp(8px, 2vw, 12px) clamp(10px, 3vw, 24px)",
       width: "100%",
       maxWidth: "100vw",
-      overflow: "hidden"
+      overflow: "visible"
     }}>
       <div style={{
         maxWidth: "1400px",
@@ -75,6 +75,7 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenPalette }) => {
         width: "100%",
         flexWrap: "nowrap"
       }}>
+
 
         {/* Brand Logo */}
         <div 
@@ -268,19 +269,22 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenPalette }) => {
             {langMenuOpen && (
               <div style={{
                 position: "absolute",
-                top: "calc(100% + 6px)",
+                top: "calc(100% + 8px)",
                 right: 0,
-                width: "170px",
+                width: "185px",
+                maxHeight: "360px",
+                overflowY: "auto",
                 background: "#15120d",
-                border: "1px solid var(--border-medium)",
+                border: "1px solid rgba(245, 158, 11, 0.4)",
                 borderRadius: "10px",
                 padding: "6px",
-                boxShadow: "0 10px 30px rgba(0,0,0,0.8)",
-                zIndex: 100,
+                boxShadow: "0 14px 40px rgba(0,0,0,0.95), 0 0 20px rgba(245, 158, 11, 0.2)",
+                zIndex: 99999,
                 display: "flex",
                 flexDirection: "column",
-                gap: "2px"
+                gap: "3px"
               }}>
+
                 {SUPPORTED_LANGUAGES.map((l) => {
                   const isSelected = l.code === language;
                   return (
