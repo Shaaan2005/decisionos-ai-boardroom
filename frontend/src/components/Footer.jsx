@@ -54,14 +54,21 @@ export const Footer = ({ onNavigate, onOpenPalette }) => {
               width: "32px",
               height: "32px",
               borderRadius: "8px",
-              background: "#f59e0b",
+              background: "linear-gradient(135deg, rgba(245, 158, 11, 0.25) 0%, rgba(20, 16, 12, 0.95) 100%)",
+              border: "1px solid rgba(245, 158, 11, 0.4)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              boxShadow: "0 0 15px rgba(245, 158, 11, 0.4)"
+              boxShadow: "0 0 15px rgba(245, 158, 11, 0.35)",
+              overflow: "hidden"
             }}>
-              <Compass size={18} color="#0b0907" strokeWidth={2.5} />
+              <img 
+                src="/decisionos-logo.png" 
+                alt="DecisionOS Logo" 
+                style={{ width: "100%", height: "100%", objectFit: "cover" }} 
+              />
             </div>
+
             <span style={{ fontSize: "1.2rem", fontWeight: 900, letterSpacing: "-0.03em" }}>
               Decision<span style={{ color: "#f59e0b" }}>OS</span>
             </span>

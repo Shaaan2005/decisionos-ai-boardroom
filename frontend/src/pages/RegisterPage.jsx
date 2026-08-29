@@ -59,18 +59,25 @@ export const RegisterPage = ({ onSwitchToLogin }) => {
         {/* Logo Header */}
         <div style={{ textAlign: "center", marginBottom: "28px" }}>
           <div style={{
-            width: "52px",
-            height: "52px",
-            borderRadius: "14px",
-            background: "linear-gradient(135deg, #6366f1 0%, #06b6d4 100%)",
+            width: "64px",
+            height: "64px",
+            borderRadius: "16px",
+            background: "linear-gradient(135deg, rgba(245, 158, 11, 0.25) 0%, rgba(20, 16, 12, 0.95) 100%)",
+            border: "1px solid rgba(245, 158, 11, 0.4)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             margin: "0 auto 12px",
-            boxShadow: "0 0 25px rgba(99, 102, 241, 0.5)"
+            boxShadow: "0 0 30px rgba(245, 158, 11, 0.4)",
+            overflow: "hidden"
           }}>
-            <Compass size={28} color="#ffffff" />
+            <img 
+              src="/decisionos-logo.png" 
+              alt="DecisionOS Brand Logo" 
+              style={{ width: "100%", height: "100%", objectFit: "cover" }} 
+            />
           </div>
+
           <h1 style={{ fontSize: "1.65rem", fontWeight: 800 }}>
             {t("auth.register_title", "Initialize Your Personal Board")}
           </h1>

@@ -69,17 +69,23 @@ export const LoginPage = ({ onSwitchToRegister }) => {
         {/* Logo Header */}
         <div style={{ textAlign: "center", marginBottom: "32px" }}>
           <div style={{
-            width: "56px",
-            height: "56px",
-            borderRadius: "16px",
-            background: "linear-gradient(135deg, #f59e0b 0%, #ff6a00 100%)",
+            width: "68px",
+            height: "68px",
+            borderRadius: "18px",
+            background: "linear-gradient(135deg, rgba(245, 158, 11, 0.25) 0%, rgba(20, 16, 12, 0.95) 100%)",
+            border: "1px solid rgba(245, 158, 11, 0.4)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             margin: "0 auto 16px",
-            boxShadow: "0 0 30px rgba(245, 158, 11, 0.35)"
+            boxShadow: "0 0 35px rgba(245, 158, 11, 0.4)",
+            overflow: "hidden"
           }}>
-            <Compass size={32} color="#ffffff" />
+            <img 
+              src="/decisionos-logo.png" 
+              alt="DecisionOS Brand Logo" 
+              style={{ width: "100%", height: "100%", objectFit: "cover" }} 
+            />
           </div>
           <h1 style={{ fontSize: "1.75rem", fontWeight: 800, letterSpacing: "-0.03em" }}>
             Welcome to Decision<span style={{ color: "var(--accent-primary)" }}>OS</span>
