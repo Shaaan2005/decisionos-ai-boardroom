@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, Power } from "lucide-react";
+import { ArrowRight, Power, Sparkles } from "lucide-react";
 import { playBootSound, playProgressTick, playProgressCompleteSound, unlockAudio } from "../utils/audioUtils";
+
 
 export const DecisionOSBootLoader = ({ onComplete }) => {
   const [hasStarted, setHasStarted] = useState(false);

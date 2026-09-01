@@ -1,8 +1,10 @@
 import React, { lazy, Suspense, useState } from "react";
+import { BrowserRouter, Routes, Route, Navigate, Outlet, useNavigate, useLocation, useParams } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import { useAuth } from "./context/useAuth";
 import { useTypingSound } from "./hooks/useTypingSound";
 import { Navbar } from "./components/Navbar";
+import { TAB_ROUTES } from "./routes";
 const LoginPage = lazy(() => import("./pages/LoginPage").then((module) => ({ default: module.LoginPage })));
 const RegisterPage = lazy(() => import("./pages/RegisterPage").then((module) => ({ default: module.RegisterPage })));
 const DashboardPage = lazy(() => import("./pages/DashboardPage").then((module) => ({ default: module.DashboardPage })));
@@ -19,18 +21,30 @@ import { ErrorBoundary } from "./components/ErrorBoundary";
 import { Footer } from "./components/Footer";
 import { AnimatePresence } from "framer-motion";
 
-const MainApp = () => {
-  const { user, loading, isAuthenticated } = useAuth();
-  const [booting, setBooting] = useState(true);
-  const [authView, setAuthView] = useState("login");
-  const [activeTab, setActiveTab] = useState("dashboard");
-  const [selectedDecisionId, setSelectedDecisionId] = useState(null);
+// Public auth routes: bounce to the cockpit once a session exists.
+const LoginRoute = () => {
+  const { loading, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+  if (loading) return null;
+  if (isAuthenticated) return <Navigate to="/" replace />;
+  return <LoginPage onSwitchToRegister={() => navigate("/register")} />;
+};
+
+const RegisterRoute = () => {
+  const { loading, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+  if (loading) return null;
+  if (isAuthenticated) return <Navigate to="/" replace />;
+  return <RegisterPage onSwitchToLogin={() => navigate("/login")} />;
+};
+
+// Shared authenticated chrome (nav, palette, footer) around all app routes.
+const ProtectedLayout = () => {
+  const { loading, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
   const [isPaletteOpen, setIsPaletteOpen] = useState(false);
 
-  // Global crisp typing sound on all keyboard input
-  useTypingSound();
-
-  // Global Cmd+K / Ctrl+K keyboard shortcut listener
   React.useEffect(() => {
     const handleKeyDown = (e) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
@@ -42,10 +56,85 @@ const MainApp = () => {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
+  if (loading) return null;
+  if (!isAuthenticated) return <Navigate to="/login" replace />;
+
+  return (
+    <>
+      <Navbar onOpenPalette={() => setIsPaletteOpen(true)} />
+
+      <CommandPalette
+        isOpen={isPaletteOpen}
+        onClose={() => setIsPaletteOpen(false)}
+        onNavigate={(tab) => {
+          navigate(TAB_ROUTES[tab] || "/");
+          setIsPaletteOpen(false);
+        }}
+      />
+
+      <ErrorBoundary>
+        <main style={{ flexGrow: 1 }} className="page-fade-in" key={location.pathname}>
+          <Outlet />
+        </main>
+      </ErrorBoundary>
+
+      {/* Global Executive Footer */}
+      <Footer
+        onNavigate={(tab) => navigate(TAB_ROUTES[tab] || "/")}
+        onOpenPalette={() => setIsPaletteOpen(true)}
+      />
+    </>
+  );
+};
+
+const DashboardRoute = () => {
+  const navigate = useNavigate();
+  return (
+    <DashboardPage
+      onSelectDecision={(id) => navigate(`/decisions/${id}`)}
+      onNewDecision={() => navigate("/decisions/new")}
+    />
+  );
+};
+
+const NewDecisionRoute = () => {
+  const navigate = useNavigate();
+  return (
+    <NewDecisionPage
+      onCancel={() => navigate("/")}
+      onCreated={(id) => navigate(`/decisions/${id}`)}
+    />
+  );
+};
+
+const DecisionDetailRoute = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  return (
+    <DecisionDetailPage
+      decisionId={id}
+      onBack={() => navigate("/")}
+    />
+  );
+};
+
+const AboutRoute = () => {
+  const navigate = useNavigate();
+  return <AboutPage onGetStarted={() => navigate("/decisions/new")} />;
+};
+
+const MainApp = () => {
+  const { isAuthenticated } = useAuth();
+  const [booting, setBooting] = useState(() => !sessionStorage.getItem("decisionos_session_initialized"));
+
+  // Global crisp typing sound on all keyboard input
+  useTypingSound();
+
   const handleBootComplete = () => {
     sessionStorage.setItem("decisionos_session_initialized", "true");
     setBooting(false);
   };
+
 
   return (
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", position: "relative", background: "#0b0907" }}>
@@ -61,91 +150,19 @@ const MainApp = () => {
 
       {/* Main Content Area */}
       <div style={{ position: "relative", zIndex: 10, display: "flex", flexDirection: "column", minHeight: "100vh" }}>
-        {!isAuthenticated ? (
-          <div>
-            {authView === "register" ? (
-              <RegisterPage onSwitchToLogin={() => setAuthView("login")} />
-            ) : (
-              <LoginPage onSwitchToRegister={() => setAuthView("register")} />
-            )}
-          </div>
-        ) : (
-          <>
-            <Navbar 
-              activeTab={activeTab} 
-              setActiveTab={setActiveTab} 
-              onOpenPalette={() => setIsPaletteOpen(true)}
-            />
-
-            <CommandPalette
-              isOpen={isPaletteOpen}
-              onClose={() => setIsPaletteOpen(false)}
-              onNavigate={(tab) => {
-                setActiveTab(tab);
-                setIsPaletteOpen(false);
-              }}
-            />
-
-            <ErrorBoundary>
-              <main style={{ flexGrow: 1 }} className="page-fade-in" key={activeTab}>
-                {activeTab === "dashboard" && (
-                  <DashboardPage
-                    onSelectDecision={(id) => {
-                      setSelectedDecisionId(id);
-                      setActiveTab("decision-detail");
-                    }}
-                    onNewDecision={() => setActiveTab("new-decision")}
-                  />
-                )}
-
-                {activeTab === "new-decision" && (
-                  <NewDecisionPage
-                    onCancel={() => setActiveTab("dashboard")}
-                    onCreated={(id) => {
-                      setSelectedDecisionId(id);
-                      setActiveTab("decision-detail");
-                    }}
-                  />
-                )}
-
-                {activeTab === "decision-detail" && (
-                  selectedDecisionId ? (
-                    <DecisionDetailPage
-                      decisionId={selectedDecisionId}
-                      onBack={() => setActiveTab("dashboard")}
-                    />
-                  ) : (
-                    <DashboardPage
-                      onSelectDecision={(id) => {
-                        setSelectedDecisionId(id);
-                        setActiveTab("decision-detail");
-                      }}
-                      onNewDecision={() => setActiveTab("new-decision")}
-                    />
-                  )
-                )}
-
-                {activeTab === "memory-vault" && (
-                  <MemoryVaultPage />
-                )}
-
-                {activeTab === "about" && (
-                  <AboutPage onGetStarted={() => setActiveTab("new-decision")} />
-                )}
-
-                {activeTab === "profile" && (
-                  <ProfilePage />
-                )}
-              </main>
-            </ErrorBoundary>
-
-            {/* Global Executive Footer */}
-            <Footer 
-              onNavigate={(tab) => setActiveTab(tab)} 
-              onOpenPalette={() => setIsPaletteOpen(true)} 
-            />
-          </>
-        )}
+        <Routes>
+          <Route path="/login" element={<LoginRoute />} />
+          <Route path="/register" element={<RegisterRoute />} />
+          <Route element={<ProtectedLayout />}>
+            <Route path="/" element={<DashboardRoute />} />
+            <Route path="/decisions/new" element={<NewDecisionRoute />} />
+            <Route path="/decisions/:id" element={<DecisionDetailRoute />} />
+            <Route path="/memory" element={<MemoryVaultPage />} />
+            <Route path="/about" element={<AboutRoute />} />
+            <Route path="/profile" element={<ProfilePage />} />
+          </Route>
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
       </div>
 
       {/* Smart LinkedIn-Style Docked AI Board Copilot Chat Box (Hidden during boot sequence) */}
@@ -159,11 +176,13 @@ import { LanguageProvider } from "./context/LanguageContext";
 
 export function App() {
   return (
-    <LanguageProvider>
-      <AuthProvider>
-        <MainApp />
-      </AuthProvider>
-    </LanguageProvider>
+    <BrowserRouter>
+      <LanguageProvider>
+        <AuthProvider>
+          <MainApp />
+        </AuthProvider>
+      </LanguageProvider>
+    </BrowserRouter>
   );
 }
 
